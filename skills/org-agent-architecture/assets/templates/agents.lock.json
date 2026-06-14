@@ -1,0 +1,19 @@
+{
+  "lockfileVersion": 1,
+  "nodes": {
+    "{{node-name}}": {
+      "kind": "{{kind}}",
+      "resolved": "file://./{{path-to-node-dir-or-file}}",
+      "integrity": "sha256-{{hash}}",
+      "requires": ["{{required-node-name}}"]
+    },
+    "{{third-party-tool-connector}}": {
+      "kind": "tool",
+      "resolved": "file://./tools/{{name}}",
+      "upstream": "{{https-url-of-source}}",
+      "vendored": "file://./tools/{{name}}/server/vendor/{{package}}",
+      "integrity": "sha256-{{hash-covers-TOOL.md-AND-server/}}",
+      "requires": []
+    }
+  }
+}

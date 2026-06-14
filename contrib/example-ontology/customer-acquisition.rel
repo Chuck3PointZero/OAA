@@ -1,0 +1,57 @@
+// Customer acquisition — example .rel ontology
+// Business domain concepts for a performance marketing team.
+// Swap the meta-ads map for any other ad platform without changing roles or skills.
+
+type CampaignID : String
+type ChannelID : String
+type AudienceID : String
+
+enum CampaignObjective = awareness | conversion | retention | reactivation
+
+// A Campaign is the top-level business unit that allocates budget and
+// targeting toward a specific objective.
+entity Campaign {
+  identified-by: CampaignID
+  property budget : Currency
+  property objective : CampaignObjective
+  property start-date : Date
+  property end-date : Date
+  constraint valid-dates: start-date <= end-date
+  relation runs-on : Channel [many-to-many]
+  relation targets : Audience [many-to-many]
+}
+
+// A Channel is a delivery surface — search, social, display, etc.
+entity Channel {
+  identified-by: ChannelID
+  property name : String
+}
+
+// An Audience is a first- or third-party segment used for targeting.
+entity Audience {
+  identified-by: AudienceID
+  property name : String
+  property size : Integer
+}
+
+// Derived: campaigns with budget above the high-value threshold.
+entity HighValueCampaign extends Campaign {
+  where: budget > 10000
+}
+
+// Derived: campaigns past their end date that are still spending.
+entity StaleActiveCampaign extends Campaign {
+  where: end-date < today and budget > 0
+}
+
+// Vocabulary map for Meta Ads API.
+// To switch to Google Ads, replace this block only — concepts stay identical.
+map meta-ads {
+  Campaign -> AdSet
+  Campaign.budget -> AdSet.daily_budget
+  Campaign.objective -> AdSet.optimization_goal
+  Campaign.start-date -> AdSet.start_time
+  Campaign.end-date -> AdSet.end_time
+  Channel -> implicit
+  Audience -> CustomAudience
+}

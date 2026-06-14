@@ -1,0 +1,62 @@
+{
+  "lockfileVersion": 1,
+  "nodes": {
+    "campaign-manager": {
+      "kind": "agent",
+      "resolved": "file://./agents/campaign-manager",
+      "integrity": "sha256-8oWGjV/+/LlTPACs+VXR/kudc1HgT4viSstDeoURurs=",
+      "requires": [
+        "roles/budget-steward",
+        "roles/campaign-operator"
+      ]
+    },
+    "budget-steward": {
+      "kind": "role",
+      "resolved": "file://./roles/budget-steward",
+      "integrity": "sha256-GWMcn+W1deI7o9z7sUZnU4MjuUTYmdg39cWDKqWMieU=",
+      "requires": [
+        "skills/budget-pacing",
+        "skills/performance-audit"
+      ]
+    },
+    "campaign-operator": {
+      "kind": "role",
+      "resolved": "file://./roles/campaign-operator",
+      "integrity": "sha256-pZTaocs8eLQ6DKOdZHrbaoTGDQrkRgWrSgJXzpyY7O8=",
+      "requires": [
+        "skills/launch-campaign",
+        "skills/performance-audit"
+      ]
+    },
+    "budget-pacing": {
+      "kind": "skill",
+      "resolved": "file://./skills/budget-pacing",
+      "integrity": "sha256-0kBj/sPQ0rov/c9Oe8q722Sz/LFCLcG6roC3tCbKIng=",
+      "requires": [
+        "tools/meta-ads"
+      ]
+    },
+    "performance-audit": {
+      "kind": "skill",
+      "resolved": "file://./skills/performance-audit",
+      "integrity": "sha256-jNmbh7z0DdCbcqKf+K3Im8dUplz9j4jHI8Q6bFo5I9Q=",
+      "requires": [
+        "tools/meta-ads"
+      ]
+    },
+    "launch-campaign": {
+      "kind": "skill",
+      "resolved": "file://./skills/launch-campaign",
+      "integrity": "sha256-TWZ/sK4/hP3WpNCVZE2d7I5uaxqRU0xpJyNAHaOcztM=",
+      "requires": [
+        "tools/meta-ads"
+      ]
+    },
+    "meta-ads": {
+      "kind": "tool",
+      "resolved": "file://./tools/meta-ads",
+      "integrity": "sha256-1TzOnnIEIw6bBYo4z2xv64+Qt1ls8+3RCOhx72fZ3/4=",
+      "requires": []
+    }
+  }
+}

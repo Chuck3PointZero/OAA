@@ -1,0 +1,36 @@
+{
+  "name": "@oaa/harness",
+  "version": "0.1.0",
+  "description": "MCP harness for Organizational Agent Architecture — compile, validate, and run OAA agent graphs",
+  "type": "module",
+  "bin": {
+    "oaa-harness": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "gray-matter": "^4.0.3",
+    "glob": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Chuck3PointZero/org-agent-architecture.git"
+  },
+  "license": "MIT"
+}

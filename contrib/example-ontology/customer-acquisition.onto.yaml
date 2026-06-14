@@ -1,0 +1,104 @@
+domain: customer-acquisition
+version: 1
+description: >
+  Example domain for a business that acquires customers through paid channels.
+  Covers campaigns, spend, creatives, audiences, and acquisitions.
+  All concept names are business vocabulary — channel-agnostic.
+
+concepts:
+
+  - name: Campaign
+    description: A coordinated marketing effort with a defined budget, objective, and schedule.
+    identity: campaign-id
+    properties:
+      - name: budget
+        type: currency
+        description: Total allocated spend in reporting currency.
+      - name: objective
+        type: enum[awareness, conversion, retention, reactivation]
+        description: The business goal this campaign serves.
+      - name: status
+        type: enum[draft, active, paused, completed]
+      - name: start-date
+        type: date
+      - name: end-date
+        type: date
+    relationships:
+      - name: runs-on
+        to: Channel
+        cardinality: many-to-many
+        description: The delivery channels this campaign uses.
+      - name: targets
+        to: Audience
+        cardinality: many-to-many
+      - name: produces
+        to: CustomerAcquisition
+        cardinality: one-to-many
+
+  - name: Channel
+    description: A delivery mechanism for marketing content. Channel-agnostic — Meta, Google, email are all Channels.
+    identity: channel-name
+    properties:
+      - name: name
+        type: string
+      - name: type
+        type: enum[paid-social, paid-search, email, sms, display]
+
+  - name: Creative
+    description: A piece of marketing content used in campaigns.
+    identity: creative-id
+    properties:
+      - name: format
+        type: enum[image, video, carousel, text]
+      - name: headline
+        type: string
+      - name: body-copy
+        type: string
+      - name: status
+        type: enum[draft, active, fatigued, retired]
+    relationships:
+      - name: used-by
+        to: Campaign
+        cardinality: many-to-many
+
+  - name: Audience
+    description: A segment of potential customers targeted by campaigns.
+    identity: audience-id
+    properties:
+      - name: size
+        type: integer
+      - name: source
+        type: enum[email-list, lookalike, interest, remarketing]
+
+  - name: MarketingSpend
+    description: Money committed to a campaign on a channel in a reporting period.
+    identity: [campaign-id, channel-name, period]
+    properties:
+      - name: amount
+        type: currency
+      - name: period
+        type: date-period
+    relationships:
+      - name: for-campaign
+        to: Campaign
+        cardinality: many-to-one
+      - name: on-channel
+        to: Channel
+        cardinality: many-to-one
+
+  - name: CustomerAcquisition
+    description: A new customer obtained through a marketing campaign.
+    identity: acquisition-id
+    properties:
+      - name: cost
+        type: currency
+        description: Cost per acquisition (CPA).
+      - name: acquired-at
+        type: datetime
+    relationships:
+      - name: from-campaign
+        to: Campaign
+        cardinality: many-to-one
+      - name: via-channel
+        to: Channel
+        cardinality: many-to-one

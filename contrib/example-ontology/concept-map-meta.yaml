@@ -1,0 +1,29 @@
+tool: meta-ads
+channel-name: "Meta (Facebook/Instagram)"
+
+maps:
+  Campaign: AdSet
+  Creative: AdCreative
+  Audience: CustomAudience
+  MarketingSpend: AdInsights
+  CustomerAcquisition: AdInsights
+
+  Campaign.budget: AdSet.daily_budget
+  Campaign.objective: AdSet.objective
+  Campaign.status: AdSet.effective_status
+  Campaign.start-date: AdSet.start_time
+  Campaign.end-date: AdSet.end_time
+  Creative.format: AdCreative.object_type
+  Creative.headline: AdCreative.title
+  Creative.body-copy: AdCreative.body
+  Creative.status: AdCreative.effective_object_story_id
+  MarketingSpend.amount: AdInsights.spend
+  MarketingSpend.period: AdInsights.date_start
+  CustomerAcquisition.cost: AdInsights.cost_per_result
+  CustomerAcquisition.acquired-at: AdInsights.date_start
+
+notes: >
+  Meta does not expose a native Audience object that maps cleanly to our Audience concept.
+  Audiences are CustomAudiences (remarketing/lookalike) or targeting specs (interest-based).
+  Channel has no direct API equivalent — it is implicit in the Meta account itself.
+  The meta-ads skill handles Channel → Platform translation in its targeting workflows.

@@ -1,0 +1,8 @@
+{
+  "kind": "{{agent | role | skill | tool | noun}}",
+  "name": "{{node-name}}",
+  "root": "{{AGENT.md | ROLE.md | SKILL.md | TOOL.md | NOUN.md}}",
+  "requires": [
+    "{{relative/path/to/required/node}}"
+  ]
+}
