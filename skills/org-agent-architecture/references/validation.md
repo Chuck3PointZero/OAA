@@ -50,4 +50,16 @@ Run the audit sequence in `references/authority-model.md` ("Auditing an Existing
 - [ ] Every resolved node has an entry; every entry's `requires` matches the files — **error** if divergent (stale lock).
 - [ ] Hash scope is correct: typed root + manifest + `references/` + `scripts/` + `assets/` + `server/`; excludes `README.md`, `memory/`, `decisions/` — **error** if a hash claims to cover excluded paths.
 - [ ] Third-party entries carry `upstream` URL and `vendored` path — **warning**.
-- [ ] Lockfile not hand-edited mid-review: if
+- [ ] Lockfile not hand-edited mid-review: if files changed, regenerate entries rather than patching hashes — hand-patched hashes defeat drift detection entirely — **error**.
+
+## 6. Reporting Format
+
+```
+## Validation: <repo or node>
+**Errors (must fix)** — item + file + one-line fix
+**Warnings (should fix)** — item + file + why it's fragile
+**Gaps (decide)** — undeclared territory + the question the owner must answer
+Verdict: VALID / VALID-WITH-WARNINGS / INVALID
+```
+
+When everything passes, say so briefly and show the resulting resolved chain(s) as an indented tree — the user should see what an agent actually inherits, not just a green light.
