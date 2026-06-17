@@ -28,10 +28,11 @@ export function emitSchemaSQL(programs: Program[], symbols: OntologySymbols): st
   }
 
   if (derived.length > 0) {
+    const enumValues = buildEnumValues(symbols);
     lines.push("-- Derived concepts as views");
     lines.push("");
     for (const d of derived) {
-      lines.push(...renderView(d));
+      lines.push(...renderView(d, enumValues));
     }
   }
 
@@ -39,8 +40,19 @@ export function emitSchemaSQL(programs: Program[], symbols: OntologySymbols): st
 }
 
 // Returns the SQL WHERE clause for a derived concept's where expression.
-export function derivedConceptWhereSQL(decl: DerivedEntityDecl): string {
-  return exprToSQL(decl.where);
+export function derivedConceptWhereSQL(decl: DerivedEntityDecl, symbols?: OntologySymbols): string {
+  const enumValues = buildEnumValues(symbols);
+  return exprToSQL(decl.where, enumValues);
+}
+
+// Collects all enum member names from the symbol table into a flat Set.
+function buildEnumValues(symbols?: OntologySymbols): Set<string> {
+  if (!symbols) return new Set();
+  const values = new Set<string>();
+  for (const { values: members } of symbols.enums.values()) {
+    for (const m of members) values.add(m);
+  }
+  return values;
 }
 
 // Translates a .rel property name (kebab-case) to a SQL column name (underscore).
@@ -49,7 +61,13 @@ export function propToCol(name: string): string {
 }
 
 // Translates a .rel Expr AST node to a SQL expression fragment.
-export function exprToSQL(expr: Expr): string {
+//
+// `enumValues` is the set of all enum member names across all enums in the
+// program. When an IdentRef name appears in this set, it is an enum value
+// literal and must be emitted as a quoted SQL string ('Refunded', 'Active',
+// etc.). Without quoting, SQLite treats the name as a column reference and
+// the WHERE clause silently returns no rows.
+export function exprToSQL(expr: Expr, enumValues: Set<string> = new Set()): string {
   switch (expr.kind) {
     case "BinaryExpr": {
       const opMap: Record<string, string> = {
@@ -57,13 +75,26 @@ export function exprToSQL(expr: Expr): string {
         ">": ">", "<": "<", ">=": ">=", "<=": "<=", "=": "=", "!=": "!=",
       };
       const op = opMap[expr.op] ?? expr.op;
-      return "(" + exprToSQL(expr.left) + " " + op + " " + exprToSQL(expr.right) + ")";
+      return (
+        "(" +
+        exprToSQL(expr.left, enumValues) +
+        " " + op + " " +
+        exprToSQL(expr.right, enumValues) +
+        ")"
+      );
     }
     case "UnaryExpr":
-      return "NOT (" + exprToSQL(expr.operand) + ")";
+      return "NOT (" + exprToSQL(expr.operand, enumValues) + ")";
     case "IdentRef":
-      // Identifiers in constraint/where expressions are property references.
-      // Convert kebab-case to underscore for SQL column names.
+      // An IdentRef resolves to either:
+      //   (a) an enum member value  → emit as a quoted SQL string literal
+      //   (b) a boolean constant    → emit as SQL integer (1 / 0)
+      //   (c) a property reference  → emit as a column name (kebab→underscore)
+      if (enumValues.has(expr.name)) {
+        return "'" + expr.name.replace(/'/g, "''") + "'";
+      }
+      if (expr.name === "true")  return "1";
+      if (expr.name === "false") return "0";
       return propToCol(expr.name);
     case "PropertyRef":
       return propToCol(expr.name);
@@ -134,10 +165,10 @@ function renderTable(entity: EntityDecl, symbols: OntologySymbols): string[] {
   return out;
 }
 
-function renderView(d: DerivedEntityDecl): string[] {
+function renderView(d: DerivedEntityDecl, enumValues: Set<string>): string[] {
   const out: string[] = [];
   if (d.doc) out.push("-- " + d.doc);
-  const whereSQL = exprToSQL(d.where);
+  const whereSQL = exprToSQL(d.where, enumValues);
   out.push("CREATE VIEW IF NOT EXISTS " + d.name + " AS");
   out.push("  SELECT * FROM " + d.base + " WHERE " + whereSQL + ";");
   out.push("");

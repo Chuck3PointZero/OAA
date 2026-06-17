@@ -10,6 +10,35 @@ export interface Authority {
   watches?: string[];
 }
 
+export interface Provenance {
+  source?: string;
+  status?: "first-party" | "third-party" | string;
+  vendored?: string;        // Path to where the REAL implementation lives,
+                            // relative to the tool dir (or a file://... path
+                            // into a sibling repo). Works for every tool
+                            // type: a vendored third-party SDK copy for
+                            // type: mcp, or a pointer to first-party backing
+                            // code (e.g. the API endpoint files that actually
+                            // enforce a never rule) for type: api / local.
+  "pinned-in"?: string;     // e.g. "agents.lock"
+  "enforcement-gap"?: EnforcementGap; // Acknowledged, justified absence of an
+                            // enforcement anchor for this tool's
+                            // authority.never rules. Documents the decision
+                            // not to build a proxy/scripts/vendored backing
+                            // yet, instead of leaving it as either a silent
+                            // gap or a deleted (and now undocumented) never
+                            // rule. See validateGraph's Tool Wiring check.
+}
+
+export interface EnforcementGap {
+  reason: string;   // why no enforcement anchor exists yet — required;
+                     // an empty/missing reason does not count as acknowledged
+  owner?: string;    // who is accountable for closing this gap
+  revisit?: string;  // ISO date (YYYY-MM-DD) to re-check whether it's closed;
+                     // once past, the finding escalates from "gap" back to
+                     // "warning" so it can't be acknowledged once and forgotten
+}
+
 export interface NodeFrontmatter {
   kind: NodeKind;
   name: string;
@@ -24,6 +53,7 @@ export interface NodeFrontmatter {
   auth?: string;
   layer?: string;
   models?: string;
+  provenance?: Provenance;
 }
 
 export interface ResolvedNode {

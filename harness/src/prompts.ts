@@ -346,7 +346,7 @@ The validator checks:
 **Node Identity** — every node has kind, name, description in frontmatter; kind matches file type
 **Edges** — all requires entries resolve to real nodes; no upward references (tool → skill → role → agent only)
 **Authority** — no item appears in both decides and never; agents don't declare authority (belongs at role level)
-**Tools and Implementations** — tool nodes have type declared; env vars are named
+**Tool Wiring** — a TOOL.md is a declaration, not an implementation, for every tool type (mcp, api, local): type: "mcp" tools must have a real server/mcp.json or they can't be launched; ANY tool with authority.never rules must show a real enforcement anchor — server/proxy/ for mcp tools, or a non-empty scripts/ dir, or a resolvable provenance.vendored pointer for api/local tools — because a never rule with nothing enforcing it at call time is decorative; a declared provenance.vendored path must actually exist on disk regardless of type. See OAA/skills/org-agent-architecture/references/example-meta-ads.md for the convention this checks against.
 **Lockfile** — agents.lock exists and contains entries for all nodes in compiled chains
 
 Reports:

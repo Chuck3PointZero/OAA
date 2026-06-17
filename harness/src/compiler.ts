@@ -38,33 +38,51 @@ const FLAT_EXTENSIONS: Record<NodeKind, string> = {
 /**
  * Find the typed root file for a node at the given path.
  * Accepts either a directory (looks for AGENT.md etc.) or a flat file path.
+ *
+ * `baseDir` is the directory `nodePath` is resolved against — per the OAA
+ * convention (see every AGENT/ROLE/SKILL template), `requires`/`fills`/
+ * `allowed-tools` entries are written relative to the file that declares
+ * them ("../../roles/foo" from an AGENT.md two levels under root), not
+ * relative to the workspace root. Callers must pass the directory
+ * containing the *requiring* node's own file, not the workspace root,
+ * or sibling-kind paths one level down from root will resolve outside
+ * the tree entirely.
  */
 export function findNodeFile(
   nodePath: string,
-  rootDir: string
+  baseDir: string
 ): { filePath: string; kind: NodeKind } | null {
-  const abs = resolve(rootDir, nodePath);
+  const abs = resolve(baseDir, nodePath);
 
-  // Try directory form first
-  if (existsSync(abs) && statSync(abs).isDirectory()) {
-    for (const [kind, filename] of Object.entries(TYPED_FILENAMES)) {
-      const candidate = join(abs, filename);
-      if (existsSync(candidate)) {
-        return { filePath: candidate, kind: kind as NodeKind };
+  if (existsSync(abs)) {
+    if (statSync(abs).isDirectory()) {
+      // Directory form: look for a typed root file inside it.
+      for (const [kind, filename] of Object.entries(TYPED_FILENAMES)) {
+        const candidate = join(abs, filename);
+        if (existsSync(candidate)) {
+          return { filePath: candidate, kind: kind as NodeKind };
+        }
+      }
+    } else {
+      // The path already points at a file. It may spell out the typed
+      // filename itself (some real nodes write "../../tools/foo/TOOL.md"
+      // instead of just "../../tools/foo") — check for an exact basename
+      // match before falling back to the flat-file (*.kind.md) form.
+      const base = abs.split(/[\\/]/).pop() || "";
+      for (const [kind, filename] of Object.entries(TYPED_FILENAMES)) {
+        if (base === filename) {
+          return { filePath: abs, kind: kind as NodeKind };
+        }
+      }
+      for (const [kind, ext] of Object.entries(FLAT_EXTENSIONS)) {
+        if (abs.endsWith(ext)) {
+          return { filePath: abs, kind: kind as NodeKind };
+        }
       }
     }
   }
 
-  // Try flat file form
-  if (existsSync(abs) && existsSync(abs) && abs.endsWith(".md")) {
-    for (const [kind, ext] of Object.entries(FLAT_EXTENSIONS)) {
-      if (abs.endsWith(ext)) {
-        return { filePath: abs, kind: kind as NodeKind };
-      }
-    }
-  }
-
-  // Try appending kind extensions to the path
+  // Try appending kind extensions to the path (flat file referenced by stem)
   for (const [kind, ext] of Object.entries(FLAT_EXTENSIONS)) {
     const candidate = abs + ext;
     if (existsSync(candidate)) {
@@ -137,11 +155,16 @@ export function resolveRequires(
 
   const resolved: ResolvedNode[] = [];
 
+  // Resolve each `requires` entry relative to the directory containing
+  // THIS node's own file, per OAA convention ("../../roles/foo" from a
+  // node living one level under root) — not relative to rootDir.
+  const nodeDir = statSync(node.path).isFile() ? dirname(node.path) : node.path;
+
   for (const req of requires) {
     if (visited.has(req)) continue;
     visited.add(req);
 
-    const found = findNodeFile(req, rootDir);
+    const found = findNodeFile(req, nodeDir);
     if (!found) continue;
 
     const child = parseNode(found.filePath, found.kind);
@@ -369,6 +392,60 @@ export function renderAgentsMd(
 }
 
 // ---------------------------------------------------------------------------
+// mcp-config.json — merged transport config for a compiled agent
+// ---------------------------------------------------------------------------
+
+export interface McpConfigResult {
+  config: { mcpServers: Record<string, unknown> };
+  missing: string[]; // tool names of type "mcp" with no server/mcp.json
+}
+
+/**
+ * Merge every required tool's server/mcp.json into one config object,
+ * keyed by tool name. Tools without type: "mcp" are skipped (api/local
+ * tools aren't launched as separate MCP servers). Tools of type "mcp"
+ * missing a server/mcp.json are reported in `missing` rather than
+ * silently dropped, since an incomplete --mcp-config breaks the agent
+ * at run time without any compile-time signal otherwise.
+ */
+export function buildMcpConfig(
+  chain: ResolvedChain,
+  rootDir: string
+): McpConfigResult {
+  const mcpServers: Record<string, unknown> = {};
+  const missing: string[] = [];
+
+  for (const tool of chain.tools) {
+    if (tool.frontmatter.type !== "mcp") continue;
+
+    const toolDir = statSync(tool.path).isFile()
+      ? dirname(tool.path)
+      : tool.path;
+    const configPath = join(toolDir, "server", "mcp.json");
+
+    if (!existsSync(configPath)) {
+      missing.push(tool.name);
+      continue;
+    }
+
+    try {
+      const raw = JSON.parse(readFileSync(configPath, "utf-8"));
+      if (raw && typeof raw === "object" && raw.mcpServers) {
+        Object.assign(mcpServers, raw.mcpServers);
+      } else {
+        // Bare single-server config with no mcpServers wrapper —
+        // key it by the tool's own name.
+        mcpServers[tool.name] = raw;
+      }
+    } catch (e) {
+      missing.push(`${tool.name} (unparsable server/mcp.json: ${String(e)})`);
+    }
+  }
+
+  return { config: { mcpServers }, missing };
+}
+
+// ---------------------------------------------------------------------------
 // agents.lock
 // ---------------------------------------------------------------------------
 
@@ -432,6 +509,8 @@ export function buildLockfile(chain: ResolvedChain, rootDir: string): Lockfile {
 export interface CompileResult {
   agentsPath: string;
   lockPath: string;
+  mcpConfigPath: string;
+  missingMcpConfigs: string[];
   chain: ResolvedChain;
   authority: ComposedAuthority;
 }
@@ -455,12 +534,29 @@ export function compileAgent(
   const agentsPath = join(agentDir, "AGENTS.md");
   writeFileSync(agentsPath, content, "utf-8");
 
+  // Write mcp-config.json next to AGENTS.md — the merged transport config
+  // for every required MCP tool, so `--mcp-config` always has exactly one
+  // per-agent file to point at regardless of how many tools the agent needs.
+  const { config: mcpConfig, missing: missingMcpConfigs } = buildMcpConfig(
+    chain,
+    rootDir
+  );
+  const mcpConfigPath = join(agentDir, "mcp-config.json");
+  writeFileSync(mcpConfigPath, JSON.stringify(mcpConfig, null, 2), "utf-8");
+
   // Write agents.lock at rootDir
   const lockfile = buildLockfile(chain, rootDir);
   const lockPath = join(rootDir, "agents.lock");
   writeFileSync(lockPath, JSON.stringify(lockfile, null, 2), "utf-8");
 
-  return { agentsPath, lockPath, chain, authority };
+  return {
+    agentsPath,
+    lockPath,
+    mcpConfigPath,
+    missingMcpConfigs,
+    chain,
+    authority,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -486,6 +582,7 @@ export function validateGraph(rootDir: string): ValidationResult {
   }
 
   const chains: ResolvedChain[] = [];
+  const checkedTools = new Set<string>(); // tool-level facts, dedupe across agents
 
   for (const af of agentFiles) {
     const agent = parseNode(af, "agent");
@@ -529,13 +626,135 @@ export function validateGraph(rootDir: string): ValidationResult {
     if (!chain) continue;
     chains.push(chain);
 
-    // Check that requires entries resolve
+    // Check tool wiring: a TOOL.md is a declaration, not an implementation —
+    // for ANY type (mcp, api, local), not just mcp. type: "mcp" tools need
+    // a real server/mcp.json to be launchable at all. Any tool of any type
+    // with authority.never rules needs an enforcement anchor (a TOOL.md
+    // alone cannot block a call — something has to actually intercept it):
+    // server/proxy/ for mcp tools, or a non-empty scripts/ dir, or a
+    // resolvable provenance.vendored pointer for api/local tools (vendored
+    // now means "where the real implementation lives," whether that's a
+    // vendored third-party copy or a pointer to first-party backing code
+    // elsewhere in the repo). A declared provenance.vendored path must
+    // exist on disk regardless of type. Convention: OAA/skills/
+    // org-agent-architecture/references/example-meta-ads.md. This is what
+    // used to require a human to notice by hand — now it surfaces here as
+    // part of the standard checklist, for every tool type.
+    for (const tool of chain.tools) {
+      if (checkedTools.has(tool.name)) continue;
+      checkedTools.add(tool.name);
+
+      const toolDir = statSync(tool.path).isFile()
+        ? dirname(tool.path)
+        : tool.path;
+      const serverDir = join(toolDir, "server");
+      const mcpConfigPath = join(serverDir, "mcp.json");
+      const proxyDir = join(serverDir, "proxy");
+      const scriptsDir = join(toolDir, "scripts");
+      const never = tool.frontmatter.authority?.never ?? [];
+      const vendoredRel = tool.frontmatter.provenance?.vendored;
+      const toolType = tool.frontmatter.type;
+
+      if (toolType === "mcp" && !existsSync(mcpConfigPath)) {
+        findings.push({
+          severity: "error",
+          check: "Tool Wiring",
+          file: tool.path,
+          message: `Tool "${tool.name}" is type: mcp but has no server/mcp.json — it cannot be launched`,
+          fix: `Add ${join("server", "mcp.json")} under ${relative(rootDir, toolDir)} (transport config naming env vars only, no secrets). See OAA/skills/org-agent-architecture/references/example-meta-ads.md`,
+        });
+      }
+
+      let vendoredResolves = false;
+      if (vendoredRel) {
+        const vendoredAbs = resolve(
+          toolDir,
+          vendoredRel.replace(/^file:\/\/\.?\//, "")
+        );
+        vendoredResolves = existsSync(vendoredAbs);
+        if (!vendoredResolves) {
+          findings.push({
+            severity: "error",
+            check: "Tool Wiring",
+            file: tool.path,
+            message: `Tool "${tool.name}" declares provenance.vendored: "${vendoredRel}" but nothing exists at that path`,
+            fix: `Vendor the upstream package (see provenance.source) at ${vendoredRel}, or correct the provenance.vendored path if it moved`,
+          });
+        }
+      }
+
+      if (never.length > 0) {
+        const hasProxy = toolType === "mcp" && existsSync(proxyDir);
+        const hasScripts =
+          existsSync(scriptsDir) &&
+          glob.sync(`${scriptsDir}/**/*`, { nodir: true }).length > 0;
+
+        if (!hasProxy && !hasScripts && !vendoredResolves) {
+          const gap = tool.frontmatter.provenance?.["enforcement-gap"];
+
+          if (gap?.reason) {
+            // Acknowledged gap: a deliberate, documented decision not to
+            // build enforcement yet, rather than an oversight. Surfaced as
+            // "gap" (decide) instead of "error" (must fix) — but never
+            // silently, and not forever: once `revisit` has passed, this
+            // escalates back to "warning" so an acknowledgment can't just
+            // sit unreviewed indefinitely.
+            //
+            // `revisit` is typed as a string, but an UNQUOTED date in YAML
+            // (revisit: 2026-09-01) is auto-parsed into a real Date object
+            // by the frontmatter parser, not left as a string — quoted or
+            // not, normalize here so display and comparison both work.
+            const revisitRaw: unknown = gap.revisit;
+            const revisitDate =
+              revisitRaw instanceof Date
+                ? revisitRaw
+                : revisitRaw
+                ? new Date(String(revisitRaw))
+                : null;
+            const revisitValid = !!revisitDate && !isNaN(revisitDate.getTime());
+            const revisitDisplay = revisitValid
+              ? revisitRaw instanceof Date
+                ? revisitDate!.toISOString().slice(0, 10)
+                : String(revisitRaw)
+              : undefined;
+            const overdue = revisitValid ? revisitDate! < new Date() : false;
+            const owner = gap.owner ?? "unassigned";
+
+            findings.push({
+              severity: overdue ? "warning" : "gap",
+              check: "Tool Wiring",
+              file: tool.path,
+              message: overdue
+                ? `Tool "${tool.name}" has an acknowledged enforcement gap past its revisit date (${revisitDisplay}, owner: ${owner}): ${gap.reason}`
+                : `Tool "${tool.name}" has an acknowledged enforcement gap (owner: ${owner}${revisitDisplay ? `, revisit: ${revisitDisplay}` : ""}): ${gap.reason}`,
+              fix: overdue
+                ? `Revisit the enforcement gap on "${tool.name}" — the date has passed. Either close it (proxy/scripts/vendored) or set a new provenance["enforcement-gap"].revisit date.`
+                : `Tracked via provenance["enforcement-gap"] in ${tool.path}. No action required before ${revisitDisplay ?? "the next revisit"}.`,
+            });
+          } else {
+            findings.push({
+              severity: "error",
+              check: "Tool Wiring",
+              file: tool.path,
+              message: `Tool "${tool.name}" declares ${never.length} authority.never rule(s) but has no enforcement anchor (no server/proxy/, no scripts/, no resolvable provenance.vendored) — nothing actually enforces them at call time, so the rule is decorative`,
+              fix:
+                toolType === "mcp"
+                  ? `Add an enforcement proxy under ${relative(rootDir, proxyDir)} that intercepts every tool call and applies each never rule before forwarding to the real backend, or document why not yet via provenance["enforcement-gap"] (reason, owner, revisit). See OAA/skills/org-agent-architecture/references/example-meta-ads.md`
+                  : `Point provenance.vendored at the file(s) that actually implement and enforce this rule (e.g. a sibling backend repo), add wrapper/enforcement code under ${relative(rootDir, scriptsDir)}, or document why not yet via provenance["enforcement-gap"] (reason, owner, revisit). See OAA/skills/org-agent-architecture/references/example-meta-ads.md`,
+            });
+          }
+        }
+      }
+    }
+
+    // Check that requires entries resolve — relative to the agent's own
+    // directory, matching the convention every requiring node uses.
     const rawRequires =
       agent.frontmatter.requires ||
       agent.frontmatter.fills ||
       [];
     for (const req of rawRequires) {
-      const found = findNodeFile(req, rootDir);
+      const found = findNodeFile(req, dirname(af));
       if (!found) {
         findings.push({
           severity: "error",

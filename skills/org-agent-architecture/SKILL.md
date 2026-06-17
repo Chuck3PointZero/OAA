@@ -115,7 +115,9 @@ Compilation resolves an agent's full dependency chain into a single `AGENTS.md` 
 
    Content sections (in order): agent identity; hard limits (all `never` rules from every tool, inlined verbatim); memory schema; run order (shared skills first, then each role with its `decides` / `escalates` / workflow pointer); escalation dispatch instructions; env var table (names only, never values); what the agent does not own (role `never` fields).
 
-6. **Update `agents.lock`** — write fresh hashes for every node touched in this compilation run.
+6. **Write `mcp-config.json`** next to `AGENTS.md` — merge the `server/mcp.json` of every required tool with `type: mcp` into one file, keyed by tool name. A tool of that type missing its `server/mcp.json` is reported as a compile-time warning, not silently dropped; an incomplete `--mcp-config` would otherwise fail only at run time.
+
+7. **Update `agents.lock`** — write fresh hashes for every node touched in this compilation run.
 
 **Do not** modify source nodes during compilation. **Do not** call any MCP tool. **Do not** run the agent's workflow. The compiler is a read + write operation on files only.
 

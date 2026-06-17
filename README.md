@@ -9,6 +9,7 @@ Agent skills for structuring multi-agent systems the way companies are structure
 | Skill | Description |
 |-------|-------------|
 | `org-agent-architecture` | Scaffold, decompose, validate, and compile organizational agent hierarchies. Use when creating or editing AGENT.md, ROLE.md, SKILL.md, or TOOL.md files; defining decision rights and escalation thresholds; reviewing an agent graph for ownership conflicts; or generating agents.lock entries. |
+| `oaa-ontology-design` | Author and validate OAA business domain ontologies using the `.rel` formal language. Use when creating or editing `.rel` ontology source files, defining business entities and tool vocabulary maps, or compiling/validating the domain ontology. |
 
 ---
 
@@ -17,7 +18,7 @@ Agent skills for structuring multi-agent systems the way companies are structure
 ### Universal (Vercel skills CLI)
 
 ```bash
-npx skills add Chuck3PointZero/org-agent-architecture --skill '*'
+npx skills add Chuck3PointZero/OAA --skill '*'
 ```
 
 To update:
@@ -30,10 +31,10 @@ npx skills update
 
 | Agent | Command |
 |-------|---------|
-| Claude Code | `claude skills add Chuck3PointZero/org-agent-architecture` |
+| Claude Code | `claude skills add Chuck3PointZero/OAA` |
 | Cursor | Add to `.cursor/mcp.json` — see [Cursor guide](#cursor) |
 | GitHub Copilot / VS Code | Add to `.github/copilot-instructions.md` — see [Copilot guide](#copilot) |
-| Codex | `codex skills add Chuck3PointZero/org-agent-architecture` |
+| Codex | `codex skills add Chuck3PointZero/OAA` |
 | Claude Desktop | See [Claude Desktop guide](#claude-desktop) |
 | Windsurf | See [Windsurf guide](#windsurf) |
 
@@ -46,10 +47,10 @@ npx skills update
 
 ```bash
 # Install the skill
-claude skills add Chuck3PointZero/org-agent-architecture
+claude skills add Chuck3PointZero/OAA
 
 # Optional: add the MCP servers (compile, validate, run, domain memory)
-claude mcp add oaa-harness -- npx -y @oaa/harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.3.0:harness
 claude mcp add oaa-ontology -- node --experimental-sqlite $(npx -y @oaa/ontology)
 ```
 
@@ -67,7 +68,7 @@ Add to your project's `.cursor/mcp.json`:
   "mcpServers": {
     "oaa": {
       "command": "npx",
-      "args": ["-y", "@oaa/harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.0:harness"]
     }
   }
 }
@@ -76,7 +77,7 @@ Add to your project's `.cursor/mcp.json`:
 Then install the skill:
 
 ```bash
-npx skills add Chuck3PointZero/org-agent-architecture --skill '*'
+npx skills add Chuck3PointZero/OAA --skill '*'
 ```
 
 </details>
@@ -97,7 +98,7 @@ Add the skill content to your repository's `.github/copilot-instructions.md`, or
 Install via skills CLI:
 
 ```bash
-npx skills add Chuck3PointZero/org-agent-architecture --skill '*'
+npx skills add Chuck3PointZero/OAA --skill '*'
 ```
 
 </details>
@@ -112,7 +113,7 @@ Add the OAA harness to your `claude_desktop_config.json`:
   "mcpServers": {
     "oaa": {
       "command": "npx",
-      "args": ["-y", "@oaa/harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.0:harness"]
     }
   }
 }
@@ -124,7 +125,7 @@ Add the OAA harness to your `claude_desktop_config.json`:
 <summary><strong>Windsurf</strong></summary>
 
 ```bash
-npx skills add Chuck3PointZero/org-agent-architecture --skill '*'
+npx skills add Chuck3PointZero/OAA --skill '*'
 ```
 
 Add the harness to Windsurf's MCP settings under Cascade → MCP Servers.
@@ -177,7 +178,7 @@ To roll OAA out across a team or organization, add this to your Claude Code proj
   "extraKnownMarketplaces": [
     {
       "name": "OAA",
-      "sourceURL": "https://raw.githubusercontent.com/Chuck3PointZero/org-agent-architecture/main/.agents/marketplace.json"
+      "sourceURL": "https://raw.githubusercontent.com/Chuck3PointZero/OAA/main/.agents/marketplace.json"
     }
   ]
 }
@@ -190,8 +191,8 @@ Team members can then install via `claude skills add org-agent-architecture` wit
 ## Source Install (Power Users)
 
 ```bash
-git clone https://github.com/Chuck3PointZero/org-agent-architecture
-cd org-agent-architecture
+git clone https://github.com/Chuck3PointZero/OAA
+cd OAA
 
 # Symlink into your project's skills directory
 ln -s $(pwd)/skills/org-agent-architecture ~/.claude/skills/org-agent-architecture
@@ -209,19 +210,21 @@ Compiles an agent's full dependency chain into a runtime instruction file, valid
 
 ```bash
 # Claude Code
-claude mcp add oaa-harness -- npx -y @oaa/harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.3.0:harness
 
 # Any MCP-compatible host
-npx -y @oaa/harness --root /path/to/company
+npx -y github:Chuck3PointZero/OAA#v0.3.0:harness --root /path/to/company
 ```
+
+Distributed from this repo via tagged git refs, not the npm registry — see [harness/README.md](harness/README.md#versioning-and-rollback) for how version pinning and rollback work.
 
 | Tool | What it does |
 |------|-------------|
-| `compile_agent(name)` | Walks the chain, writes AGENTS.md, updates agents.lock |
+| `compile_agent(name)` | Walks the chain, writes AGENTS.md, merges required tools' `server/mcp.json` into one `mcp-config.json`, updates agents.lock |
 | `validate_graph()` | Returns errors, warnings, and gaps across the full graph |
 | `get_status(name)` | Returns last run state and escalation log from memory/ |
 | `get_ontology()` | Returns compiled ONTOLOGY.md if present |
-| `run_agent(name)` | (Stub) Returns AGENTS.md content for manual use |
+| `run_agent(name)` | Returns AGENTS.md content, ready to hand to an LLM — see "Running a Compiled Agent" below for the launch command |
 
 See [harness/README.md](harness/README.md) for the full reference.
 
@@ -255,7 +258,7 @@ See [ontology/README.md](ontology/README.md) for the full reference.
   "mcpServers": {
     "oaa-harness": {
       "command": "npx",
-      "args": ["-y", "@oaa/harness", "--root", "/path/to/company"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.0:harness", "--root", "/path/to/company"]
     },
     "oaa-ontology": {
       "command": "node",
@@ -265,6 +268,42 @@ See [ontology/README.md](ontology/README.md) for the full reference.
   }
 }
 ```
+
+---
+
+## Running a Compiled Agent
+
+`AGENTS.md` is not a record of the compile — it IS the payload. "Running" an agent means handing that file to an LLM as its complete operating instructions. There's no separate launch mechanism beyond that handoff, and this is the same regardless of what triggers it.
+
+The principle is host-agnostic; the concrete command below is the Claude Code instantiation, using the `ads-manager` / `meta-ads` worked example from [`references/example-meta-ads.md`](skills/org-agent-architecture/references/example-meta-ads.md):
+
+```powershell
+claude.exe `
+  -p "Begin your run." `
+  --permission-mode dontAsk `
+  --system-prompt-file "company\agents\ads-manager\AGENTS.md" `
+  --mcp-config "company\agents\ads-manager\mcp-config.json" `
+  --strict-mcp-config
+```
+
+(drop `.exe` on macOS/Linux)
+
+- `-p` — headless; exits automatically when the run completes.
+- `--permission-mode dontAsk` — no interactive prompts; required for any unattended/scheduled run.
+- `--system-prompt-file` — **replaces** Claude Code's default system prompt with the verbatim contents of `AGENTS.md`. Not append: a compiled agent isn't a coding assistant with extra rules bolted on, it's exactly and only what `AGENTS.md` says.
+- `--mcp-config` + `--strict-mcp-config` — scopes this run to only the tools `AGENTS.md`'s `## Tools` table names, isolated from whatever else sits in the operator's global Claude Code config. `mcp-config.json` is not hand-authored: `compile_agent` writes it next to `AGENTS.md` every time it runs, by merging the `server/mcp.json` of every tool the agent's chain requires. An agent needing three tools and an agent needing one both get a single `mcp-config.json` — the merge happens at compile time, not at launch time.
+
+The path to that agent's `AGENTS.md` and its compiler-generated `mcp-config.json` are the only per-agent variables. Everything else in the command is identical for every agent. If `compile_agent` reports a tool missing its `server/mcp.json`, the generated `mcp-config.json` will be incomplete for that tool until one is added and the agent is recompiled.
+
+### Where the schedule lives
+
+`AGENT.md`'s `metadata.schedule` field (a cron string) records *when* this command should run. *What* fires it at that time — cron, Windows Task Scheduler, a GitHub Actions workflow, a human at a keyboard — is host infrastructure and out of scope for OAA. Anything capable of running the command above on schedule satisfies the contract.
+
+### What this is not
+
+- **Not a retry policy.** A crashed or timed-out run is a host decision (retry next trigger, page on-call) — same as any other scheduled job.
+- **Not multi-turn.** One trigger → one `AGENTS.md` payload → one autonomous run → exit.
+- **Not where the schedule lives** (see above) — this section only covers what happens once the trigger fires.
 
 ---
 

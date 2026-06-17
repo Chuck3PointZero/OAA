@@ -16,7 +16,7 @@ export const toolDefinitions = [
   {
     name: "compile_agent",
     description:
-      "Walk the OAA chain for a named agent (AGENT.md → ROLE(s) → SKILL(s) → TOOL(s)), compose authority, write AGENTS.md as a runtime instruction file, and update agents.lock. Required before running an agent.",
+      "Walk the OAA chain for a named agent (AGENT.md → ROLE(s) → SKILL(s) → TOOL(s)), compose authority, write AGENTS.md as a runtime instruction file, merge every required tool's server/mcp.json into one mcp-config.json, and update agents.lock. Required before running an agent.",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -89,7 +89,7 @@ export const toolDefinitions = [
   {
     name: "run_agent",
     description:
-      "[STUB] Launch an agent using its compiled AGENTS.md as the system prompt and wire up its declared MCP tools. Not yet implemented — returns the AGENTS.md content for manual use.",
+      "Return a named agent's compiled AGENTS.md content, ready to hand to an LLM as its full operating instructions. Execution itself is intentionally out of scope — it depends on which CLI or provider is hosting the run, which this compiler does not assume. See the OAA README's 'Running a Compiled Agent' section for the concrete launch command.",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -139,6 +139,7 @@ export async function handleTool(
           `✅ Compiled agent: ${agentName}`,
           ``,
           `AGENTS.md written to: ${result.agentsPath}`,
+          `mcp-config.json written to: ${result.mcpConfigPath}`,
           `agents.lock updated: ${result.lockPath}`,
           ``,
           `Chain:`,
@@ -152,6 +153,14 @@ export async function handleTool(
           `  decides:  ${result.authority.decides.join(", ") || "(none)"}`,
           `  escalates: ${result.authority.escalates.join(", ") || "(none)"}`,
           `  never:    ${result.authority.never.join(", ") || "(none)"}`,
+          ...(result.missingMcpConfigs.length > 0
+            ? [
+                ``,
+                `⚠️  Missing server/mcp.json for: ${result.missingMcpConfigs.join(", ")}`,
+                `   mcp-config.json was written without these — add each tool's`,
+                `   server/mcp.json and recompile before using --mcp-config to run this agent.`,
+              ]
+            : []),
         ].join("\n");
         return text(summary);
       } catch (e) {
@@ -248,7 +257,10 @@ export async function handleTool(
         return text("Error: `name` argument is required.");
       }
 
-      // Stub: resolve chain and return AGENTS.md if it exists
+      // By design: this compiler resolves the chain and hands back AGENTS.md
+      // content. Actually running it is host-specific (which CLI, which
+      // provider) and is deliberately not this tool's job — see the OAA
+      // README's "Running a Compiled Agent" section for the concrete command.
       try {
         const chain = resolveChain(agentName, rootDir);
         if (!chain) {
@@ -268,8 +280,9 @@ export async function handleTool(
         const agentsContent = readFileSync(agentsPath, "utf-8");
 
         return text(
-          `[STUB] run_agent is not yet implemented as an autonomous loop.\n\n` +
-            `The compiled AGENTS.md for "${agentName}" follows — use it as a system prompt:\n\n` +
+          `Execution is host-specific by design — this compiler doesn't assume which CLI or provider is running the agent. ` +
+            `See the OAA README's "Running a Compiled Agent" section for the concrete launch command.\n\n` +
+            `The compiled AGENTS.md for "${agentName}" follows — hand it to your LLM as its full operating instructions:\n\n` +
             `---\n\n${agentsContent}`
         );
       } catch (e) {
