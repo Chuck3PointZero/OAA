@@ -50,7 +50,7 @@ npx skills update
 claude skills add Chuck3PointZero/OAA
 
 # Optional: add the MCP servers (compile, validate, run, domain memory)
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.3.0:harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.3.1:harness
 claude mcp add oaa-ontology -- node --experimental-sqlite $(npx -y @oaa/ontology)
 ```
 
@@ -68,7 +68,7 @@ Add to your project's `.cursor/mcp.json`:
   "mcpServers": {
     "oaa": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.0:harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.1:harness"]
     }
   }
 }
@@ -113,7 +113,7 @@ Add the OAA harness to your `claude_desktop_config.json`:
   "mcpServers": {
     "oaa": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.0:harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.1:harness"]
     }
   }
 }
@@ -210,10 +210,10 @@ Compiles an agent's full dependency chain into a runtime instruction file, valid
 
 ```bash
 # Claude Code
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.3.0:harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.3.1:harness
 
 # Any MCP-compatible host
-npx -y github:Chuck3PointZero/OAA#v0.3.0:harness --root /path/to/company
+npx -y github:Chuck3PointZero/OAA#v0.3.1:harness --root /path/to/company
 ```
 
 Distributed from this repo via tagged git refs, not the npm registry — see [harness/README.md](harness/README.md#versioning-and-rollback) for how version pinning and rollback work.
@@ -258,7 +258,7 @@ See [ontology/README.md](ontology/README.md) for the full reference.
   "mcpServers": {
     "oaa-harness": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.0:harness", "--root", "/path/to/company"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.1:harness", "--root", "/path/to/company"]
     },
     "oaa-ontology": {
       "command": "node",

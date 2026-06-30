@@ -10,14 +10,14 @@ MCP server for the [Organizational Agent Architecture](https://github.com/Chuck3
 
 ```bash
 # Claude Code
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.3.0:harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.3.1:harness
 
 # Claude Desktop / Cursor / Windsurf — add to your MCP config
 {
   "mcpServers": {
     "oaa-harness": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.0:harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.1:harness"]
     }
   }
 }
@@ -26,12 +26,12 @@ claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.3.0:harness
 Point the server at your OAA workspace by setting `OAA_ROOT` or passing `--root <path>`:
 
 ```bash
-OAA_ROOT=/path/to/company npx github:Chuck3PointZero/OAA#v0.3.0:harness
+OAA_ROOT=/path/to/company npx github:Chuck3PointZero/OAA#v0.3.1:harness
 # or
-npx github:Chuck3PointZero/OAA#v0.3.0:harness --root /path/to/company
+npx github:Chuck3PointZero/OAA#v0.3.1:harness --root /path/to/company
 ```
 
-The `#v0.3.0` pins to a tagged release rather than floating on the default branch — see **Versioning and rollback** below for why that matters and how to step down to an older release if one causes problems.
+The `#v0.3.1` pins to a tagged release rather than floating on the default branch — see **Versioning and rollback** below for why that matters and how to step down to an older release if one causes problems.
 
 There's no published build artifact in git (`dist/` is gitignored) — installing from a git ref triggers the package's `prepare` script, which runs `npm run build` automatically before the server starts. The first `npx` invocation of a given version will be slower than later ones while it builds and npx caches the result.
 
@@ -66,7 +66,7 @@ A typical agent setup loads both MCP servers:
   "mcpServers": {
     "oaa-harness": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.0:harness", "--root", "/path/to/company"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.3.1:harness", "--root", "/path/to/company"]
     },
     "oaa-ontology": {
       "command": "node",
@@ -83,9 +83,9 @@ The harness handles the structural graph (what an agent is allowed to do). The o
 
 ## Versioning and Rollback
 
-Every release is tagged in git (`v0.2.0`, `v0.3.0`, ...) with notes in `CHANGELOG.md` and a matching [GitHub Release](https://github.com/Chuck3PointZero/OAA/releases). Tags are what make rollback possible: an install pinned to `#v0.3.0` keeps working exactly as it does today even if `main` moves on or a later release has a bug.
+Every release is tagged in git (`v0.2.0`, `v0.3.1`, ...) with notes in `CHANGELOG.md` and a matching [GitHub Release](https://github.com/Chuck3PointZero/OAA/releases). Tags are what make rollback possible: an install pinned to `#v0.3.1` keeps working exactly as it does today even if `main` moves on or a later release has a bug.
 
-**To step down to an earlier release**, change the pinned ref in your MCP config (or `claude mcp add` command) from the current tag to the one you want, e.g. `#v0.3.0:harness` → `#v0.2.0:harness`, then restart the MCP server. `npx` caches each distinct git ref separately, so switching back and forth doesn't require clearing anything.
+**To step down to an earlier release**, change the pinned ref in your MCP config (or `claude mcp add` command) from the current tag to the one you want, e.g. `#v0.3.1:harness` → `#v0.2.0:harness`, then restart the MCP server. `npx` caches each distinct git ref separately, so switching back and forth doesn't require clearing anything.
 
 **Avoid pinning to a branch** (`#main`) for anything other than local testing — a branch ref is mutable, so "rollback" wouldn't mean anything and a force-push upstream could change what you're running without your config changing at all. Tags are immutable by convention; don't reuse or move one after it's released.
 
