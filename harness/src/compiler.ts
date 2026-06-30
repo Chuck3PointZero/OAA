@@ -544,9 +544,20 @@ export function compileAgent(
   const mcpConfigPath = join(agentDir, "mcp-config.json");
   writeFileSync(mcpConfigPath, JSON.stringify(mcpConfig, null, 2), "utf-8");
 
-  // Write agents.lock at rootDir
-  const lockfile = buildLockfile(chain, rootDir);
+  // Write agents.lock at rootDir — merge with existing so sequential compile_agent
+  // calls accumulate all agent chains rather than each overwriting the previous.
   const lockPath = join(rootDir, "agents.lock");
+  let existingNodes: Record<string, LockfileEntry> = {};
+  if (existsSync(lockPath)) {
+    try {
+      const existing = JSON.parse(readFileSync(lockPath, "utf-8")) as Lockfile;
+      existingNodes = existing.nodes ?? {};
+    } catch {
+      // corrupt or empty lockfile — start fresh
+    }
+  }
+  const lockfile = buildLockfile(chain, rootDir);
+  lockfile.nodes = { ...existingNodes, ...lockfile.nodes };
   writeFileSync(lockPath, JSON.stringify(lockfile, null, 2), "utf-8");
 
   return {

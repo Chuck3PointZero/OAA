@@ -1,6 +1,6 @@
 {
   "name": "@oaa/harness",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "MCP harness for Organizational Agent Architecture — compile, validate, and run OAA agent graphs",
   "type": "module",
   "bin": {
