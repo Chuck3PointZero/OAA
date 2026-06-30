@@ -9,6 +9,11 @@
 //   6. Enum comparisons reference valid enum values
 //   7. Map entries reference declared concepts and properties
 //   8. Cardinality is valid (enforced by parser, re-checked here)
+//   9. Possible undeclared relation: a property's type is the identity-key
+//      type of another declared entity, but no `relation` to that entity
+//      exists. This is the FK-shaped-property smell — a property that is
+//      almost certainly meant to be a relation but was written as a plain
+//      scalar instead, which silently drops FK enforcement and join-ability.
 
 import type {
   Program,
@@ -72,9 +77,10 @@ export function checkPrograms(programs: Program[]): {
   }
 
   // Phase 2: validate references and expressions
+  const identityIndex = buildIdentityTypeIndex(symbols);
   for (const prog of programs) {
     for (const stmt of prog.statements) {
-      validateStatement(stmt, prog.sourcePath, symbols, findings);
+      validateStatement(stmt, prog.sourcePath, symbols, findings, identityIndex);
     }
   }
 
@@ -149,6 +155,19 @@ function checkDuplicate(
 // Phase 2: validate references
 // ---------------------------------------------------------------------------
 
+// Maps an identity-key type name (e.g. "ProductID") to the base entity it
+// identifies (e.g. "Product"). Only base entities have a meaningful identity
+// key for this purpose — derived entities inherit their base's identity.
+function buildIdentityTypeIndex(symbols: OntologySymbols): Map<string, string> {
+  const index = new Map<string, string>();
+  for (const [entityName, { decl }] of symbols.entities) {
+    if (decl.kind === "EntityDecl" && decl.identifiedBy) {
+      index.set(decl.identifiedBy, entityName);
+    }
+  }
+  return index;
+}
+
 function resolveTypeRef(
   typeName: string,
   symbols: OntologySymbols
@@ -165,7 +184,8 @@ function validateStatement(
   stmt: Statement,
   src: string,
   symbols: OntologySymbols,
-  findings: CheckFinding[]
+  findings: CheckFinding[],
+  identityIndex: Map<string, string>
 ): void {
   switch (stmt.kind) {
     case "TypeDecl":
@@ -229,6 +249,32 @@ function validateStatement(
             col: rel.loc.col,
             message: `Relation "${rel.name}" on "${stmt.name}" targets "${rel.target}" which is not declared in this ontology.`,
             fix: `Declare "entity ${rel.target} { ... }" or add the source file that defines it.`,
+          });
+        }
+      }
+
+      // Check 9: a property typed with another entity's identity-key type,
+      // but no `relation` to that entity is declared. This is almost always
+      // a foreign key that was written as a plain scalar property instead
+      // of a relation — it loses FK enforcement (sql.ts only emits a
+      // REFERENCES column for declared relations) and join-ability
+      // (query_concept has no way to resolve it back to the target row).
+      const declaredRelationTargets = new Set(stmt.relations.map((r) => r.target));
+      for (const prop of stmt.properties) {
+        const targetEntity = identityIndex.get(prop.type);
+        if (
+          targetEntity &&
+          targetEntity !== stmt.name &&
+          !declaredRelationTargets.has(targetEntity)
+        ) {
+          findings.push({
+            severity: "gap",
+            check: "Possible Undeclared Relation",
+            source: src,
+            line: prop.loc.line,
+            col: prop.loc.col,
+            message: `Property "${prop.name}" on "${stmt.name}" has type "${prop.type}", which is the identity key of entity "${targetEntity}". This looks like a foreign key written as a plain property — it gets no FK enforcement and can't be resolved by query_concept. Is this intentional?`,
+            fix: `relation ${prop.name} : ${targetEntity} [many-to-one]`,
           });
         }
       }
@@ -334,6 +380,7 @@ function validateStatement(
 
     case "EnumDecl":
       break; // nothing to validate
+
   }
 }
 
