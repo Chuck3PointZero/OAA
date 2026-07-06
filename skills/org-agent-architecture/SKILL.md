@@ -121,6 +121,17 @@ Compilation resolves an agent's full dependency chain into a single `AGENTS.md` 
 
 **Do not** modify source nodes during compilation. **Do not** call any MCP tool. **Do not** run the agent's workflow. The compiler is a read + write operation on files only.
 
+### Optional: Compact Prompt (Pass 2)
+
+If `compile_agent` returns `compactNeeded: true` (the agent's `AGENT.md` has `models: [tiny]`), perform Pass 2 after the steps above:
+
+1. Call `get_compact_prompt_template()` to get the rewriting instructions.
+2. Read `AGENTS.orig.md` (the narrative backup `compile_agent` just wrote alongside `AGENTS.md`).
+3. Rewrite it following those instructions — Identity, Tools, Rules, Workflow, Output contract; cut all rationale, history, and explanatory prose; keep every tool name, env var, and never-list item verbatim.
+4. Verify every tool name, env var, and never-list item from `AGENTS.orig.md` appears verbatim in your rewrite before writing anything.
+5. Write the compact result to `AGENTS.md`, with `<!-- compacted: see AGENTS.orig.md for the narrative source -->` as the first line.
+6. If the fact-retention check fails, leave `AGENTS.md` as the narrative version Pass 1 wrote and report what was missing. The next `compile_agent` call will retry automatically.
+
 ## Workflow: Ontology and Memory
 
 The `@oaa/ontology` MCP server exposes a domain vocabulary compiler and a SQLite-backed entity store. Together they provide the shared memory layer that roles use to reason without re-fetching from external APIs on every decision.

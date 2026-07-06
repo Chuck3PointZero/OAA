@@ -11,7 +11,8 @@ authority:                           # ONLY if this procedure adds its own const
 
 # Skill: {{Skill Name}}
 
-{{What this procedure accomplishes and when a role should reach for it.}}
+{{Only write this if the skill's scope or preconditions aren't obvious from the
+description. Usually omit — the ## Workflow below is the body.}}
 
 ## Workflow
 

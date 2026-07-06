@@ -1,5 +1,5 @@
 import { readFileSync, existsSync } from "fs";
-import { join, dirname, relative } from "path";
+import { join, dirname, relative, basename } from "path";
 import { glob } from "glob";
 import matter from "gray-matter";
 import type { NodeFrontmatter } from "./types.js";
@@ -76,8 +76,8 @@ export function listResources(rootDir: string): OaaResource[] {
       const fm = data as NodeFrontmatter;
       const name =
         fm.name ||
-        dirname(f).split("/").pop() ||
-        f.split("/").pop()!.replace(/\.(agent|role|skill|tool)\.md$/, "");
+        basename(dirname(f)) ||
+        basename(f).replace(/\.(agent|role|skill|tool)\.md$/, "");
 
       resources.push({
         uri: `oaa://node/${name}`,
@@ -182,8 +182,8 @@ function buildCatalog(rootDir: string): string {
       const fm = data as NodeFrontmatter;
       const name =
         fm.name ||
-        dirname(f).split("/").pop() ||
-        f.split("/").pop()!.replace(/\.(agent|role|skill|tool)\.md$/, "");
+        basename(dirname(f)) ||
+        basename(f).replace(/\.(agent|role|skill|tool)\.md$/, "");
 
       catalog.push({
         name,
@@ -229,8 +229,8 @@ function readNodeByName(
       const fm = data as NodeFrontmatter;
       const name =
         fm.name ||
-        dirname(f).split("/").pop() ||
-        f.split("/").pop()!.replace(/\.(agent|role|skill|tool)\.md$/, "");
+        basename(dirname(f)) ||
+        basename(f).replace(/\.(agent|role|skill|tool)\.md$/, "");
 
       if (name === nodeName || name.toLowerCase() === nodeName.toLowerCase()) {
         return { mimeType: "text/markdown", text: raw };

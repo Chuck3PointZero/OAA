@@ -4,6 +4,7 @@ name: {{tool-name}}
 description: {{One sentence: what this tool does and why it exists.}}
 type: {{api | mcp | local}}
 env: {{ENV_VAR_NAME}}                # the primary credential env var; name only, never the value
+                                     # omit entirely if this tool needs no credentials
 provenance:                          # required for type: api and type: mcp
   source: {{upstream-url-or-internal}}
   status: {{first-party | third-party}}
@@ -16,8 +17,9 @@ authority:
 
 # Tool: {{Tool Name}}
 
-{{What the underlying service is; auth model (env var NAMES only — never values);
-known quirks; rate limits.}}
+{{Auth model, known quirks, rate limits, enforcement gaps. Omit anything already
+captured in the frontmatter (type, env, provenance, never). If the tool is
+straightforward, write only what would surprise a maintainer.}}
 
 ## Declared Functions
 

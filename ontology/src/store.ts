@@ -7,7 +7,7 @@ import { mkdirSync, existsSync } from "fs";
 import { join } from "path";
 import { createHash } from "crypto";
 import { tmpdir } from "os";
-import type { Program } from "./ast.js";
+import type { Program, EntityDecl, DerivedEntityDecl } from "./ast.js";
 import type { OntologySymbols } from "./checker.js";
 import { propToCol } from "./sql.js";
 
@@ -155,10 +155,34 @@ export class OntologyStore {
     const vals: unknown[] = [];
 
     if (filters && Object.keys(filters).length > 0) {
-      const whereClauses = Object.keys(filters).map((k) => {
+      // Resolve the base EntityDecl so we can validate filter column names.
+      // DerivedEntityDecl is a SQL view over its base entity — same columns.
+      const entityEntry = this.symbols.entities.get(conceptName)!;
+      const baseDecl: EntityDecl | undefined =
+        entityEntry.decl.kind === "EntityDecl"
+          ? entityEntry.decl
+          : (this.symbols.entities.get((entityEntry.decl as DerivedEntityDecl).base)
+              ?.decl as EntityDecl | undefined);
+      const knownCols: Set<string> | null = baseDecl
+        ? new Set([
+            "id",
+            "_updated_at",
+            "_source",
+            ...baseDecl.properties.map((p) => propToCol(p.name)),
+            ...baseDecl.relations
+              .filter((r) => r.cardinality === "many-to-one" || r.cardinality === "one-to-one")
+              .map((r) => propToCol(r.name) + "_id"),
+          ])
+        : null;
+
+      const whereClauses: string[] = [];
+      for (const k of Object.keys(filters)) {
+        if (knownCols && !knownCols.has(propToCol(k))) {
+          return { ok: false, error: `Unknown filter column "${k}" on "${conceptName}".` };
+        }
         vals.push(filters[k]);
-        return propToCol(k) + " = ?";
-      });
+        whereClauses.push(propToCol(k) + " = ?");
+      }
       sql += " WHERE " + whereClauses.join(" AND ");
     }
     sql += ";";

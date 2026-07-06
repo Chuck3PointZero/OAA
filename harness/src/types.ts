@@ -52,7 +52,7 @@ export interface NodeFrontmatter {
   env?: string;
   auth?: string;
   layer?: string;
-  models?: string;
+  models?: string[];
   provenance?: Provenance;
 }
 

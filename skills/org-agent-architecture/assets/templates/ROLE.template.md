@@ -21,9 +21,25 @@ authority:
 
 # Role: {{Role Name}}
 
-{{Operating prose: what good performance looks like; definitions the authority
-identifiers rely on ("stable volume means…"); contextual notes. Prose does NOT
-grant or restrict anything — only the frontmatter composes.}}
+{{Operating prose — only write this if an authority identifier needs a definition
+("stable volume means ≥ 3 consecutive hours"), or good performance has a shape
+a maintainer couldn't derive from the frontmatter. Never restate owns/decides/
+escalates/never in prose. If the frontmatter is self-explanatory, one line or nothing.}}
+
+## Memory
+
+`memory/state.json` persists between activations — the runtime state for this role's owned domain.
+Omit this section if the role makes no decisions based on prior state.
+
+```json
+{{state-schema-example}}
+```
+
+{{Field-by-field notes: what each field tracks, when it resets, what a human learns from it.}}
+
+**For `executor: remote` agents:** the runner injects this schema into the system prompt. Without
+documented field names, the model invents them. Every remote-executor agent filling this role must
+have this section populated.
 
 ## Decisions Log
 

@@ -1,5 +1,5 @@
 import { readFileSync, existsSync, writeFileSync, statSync } from "fs";
-import { join, dirname, resolve, relative } from "path";
+import { join, dirname, resolve, relative, basename } from "path";
 import { createHash } from "crypto";
 import matter from "gray-matter";
 import { glob } from "glob";
@@ -113,10 +113,8 @@ export function parseNode(filePath: string, kind: NodeKind): ResolvedNode {
   const name =
     fm.name ||
     (statSync(filePath).isFile()
-      ? dirname(filePath).split("/").pop() ||
-        filePath
-          .split("/")
-          .pop()!
+      ? basename(dirname(filePath)) ||
+        basename(filePath)
           .replace(/\.(agent|role|skill|tool|noun)\.md$/, "")
           .toLowerCase()
       : "unknown");
@@ -194,7 +192,7 @@ export function resolveChain(
     const raw = readFileSync(c, "utf-8");
     const { data } = matter(raw);
     const fm = data as NodeFrontmatter;
-    const name = fm.name || dirname(c).split("/").pop() || "";
+    const name = fm.name || basename(dirname(c)) || "";
     if (name === agentName || name.toLowerCase() === agentName.toLowerCase()) {
       agentFile = c;
       break;
@@ -496,7 +494,7 @@ export function buildLockfile(chain: ResolvedChain, rootDir: string): Lockfile {
       requires,
     };
 
-    nodes[node.name] = entry;
+    nodes[rel] = entry;
   }
 
   return { lockfileVersion: 1, nodes };
@@ -513,6 +511,8 @@ export interface CompileResult {
   missingMcpConfigs: string[];
   chain: ResolvedChain;
   authority: ComposedAuthority;
+  compactNeeded: boolean;
+  agentsOrigPath?: string;
 }
 
 export function compileAgent(
@@ -533,6 +533,16 @@ export function compileAgent(
   const agentDir = dirname(chain.agent.path);
   const agentsPath = join(agentDir, "AGENTS.md");
   writeFileSync(agentsPath, content, "utf-8");
+
+  // If models includes "tiny", copy AGENTS.md → AGENTS.orig.md as the
+  // narrative backup for the LLM to read during Pass 2 compaction.
+  const models = chain.agent.frontmatter.models ?? [];
+  const compactNeeded = models.includes("tiny");
+  let agentsOrigPath: string | undefined;
+  if (compactNeeded) {
+    agentsOrigPath = join(agentDir, "AGENTS.orig.md");
+    writeFileSync(agentsOrigPath, content, "utf-8");
+  }
 
   // Write mcp-config.json next to AGENTS.md — the merged transport config
   // for every required MCP tool, so `--mcp-config` always has exactly one
@@ -567,6 +577,8 @@ export function compileAgent(
     missingMcpConfigs,
     chain,
     authority,
+    compactNeeded,
+    agentsOrigPath,
   };
 }
 
@@ -777,6 +789,34 @@ export function validateGraph(rootDir: string): ValidationResult {
       }
     }
 
+    // Check that role and skill requires entries resolve
+    for (const role of chain.roles) {
+      for (const req of role.frontmatter.requires ?? []) {
+        if (!findNodeFile(req, dirname(role.path))) {
+          findings.push({
+            severity: "error",
+            check: "Edges",
+            file: role.path,
+            message: `Unresolved requires: "${req}" in role "${role.name}"`,
+            fix: `Create the node at ${req} or update the requires path`,
+          });
+        }
+      }
+    }
+    for (const skill of chain.skills) {
+      for (const req of skill.frontmatter.requires ?? skill.frontmatter["allowed-tools"] ?? []) {
+        if (!findNodeFile(req, dirname(skill.path))) {
+          findings.push({
+            severity: "error",
+            check: "Edges",
+            file: skill.path,
+            message: `Unresolved requires: "${req}" in skill "${skill.name}"`,
+            fix: `Create the node at ${req} or update the requires path`,
+          });
+        }
+      }
+    }
+
     // Validate each role in chain
     for (const role of chain.roles) {
       if (role.frontmatter.kind !== "role") {
@@ -787,18 +827,18 @@ export function validateGraph(rootDir: string): ValidationResult {
           message: `Expected kind: role but got "${role.frontmatter.kind}"`,
         });
       }
+    }
 
-      // Check authority placement — agents should not declare decides/escalates
-      if (agent.frontmatter.authority?.decides?.length) {
-        findings.push({
-          severity: "warning",
-          check: "Authority",
-          file: af,
-          message:
-            "Agent declares `decides` — authority should be declared at role level",
-          fix: "Move `decides` into the role's authority section",
-        });
-      }
+    // Check authority placement — agents should not declare decides/escalates
+    if (agent.frontmatter.authority?.decides?.length) {
+      findings.push({
+        severity: "warning",
+        check: "Authority",
+        file: af,
+        message:
+          "Agent declares `decides` — authority should be declared at role level",
+        fix: "Move `decides` into the role's authority section",
+      });
     }
 
     // Check authority composition for conflicts
@@ -836,10 +876,22 @@ export function validateGraph(rootDir: string): ValidationResult {
         message: "agents.lock not found — run compile_agent to generate it",
       });
     } else {
-      // Check for stale entries
-      const lock: Lockfile = JSON.parse(readFileSync(lockPath, "utf-8"));
+      let lock: Lockfile;
+      try {
+        lock = JSON.parse(readFileSync(lockPath, "utf-8"));
+      } catch {
+        findings.push({
+          severity: "warning",
+          check: "Lockfile",
+          file: lockPath,
+          message: "agents.lock is corrupt or unparseable — run compile_agent to regenerate it.",
+        });
+        continue;
+      }
       for (const node of [chain.agent, ...chain.roles, ...chain.skills, ...chain.tools]) {
-        const entry = lock.nodes[node.name];
+        const nodeDir = statSync(node.path).isFile() ? dirname(node.path) : node.path;
+        const nodeRel = `file://./${relative(rootDir, nodeDir).replace(/\\/g, "/")}`;
+        const entry = lock.nodes[nodeRel];
         if (!entry) {
           findings.push({
             severity: "warning",
@@ -847,6 +899,16 @@ export function validateGraph(rootDir: string): ValidationResult {
             file: lockPath,
             message: `Node "${node.name}" is not in agents.lock — run compile_agent to refresh`,
           });
+        } else {
+          const currentHash = hashNode(node.path, nodeDir);
+          if (currentHash !== entry.integrity) {
+            findings.push({
+              severity: "warning",
+              check: "Lockfile",
+              file: lockPath,
+              message: `Node "${node.name}" has changed since last compile — run compile_agent to refresh`,
+            });
+          }
         }
       }
     }

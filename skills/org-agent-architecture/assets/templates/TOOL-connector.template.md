@@ -17,8 +17,9 @@ authority:
 
 # Tool: {{Tool Name}} (connector)
 
-{{What the underlying service is; auth model (env var NAMES only — never values);
-known quirks; rate limits.}}
+{{Auth model, known quirks, rate limits, enforcement gaps. Omit anything already
+captured in the frontmatter (type, env, provenance, never). If the tool is
+straightforward, write only what would surprise a maintainer.}}
 
 ## server/ — the implementation
 

@@ -20,6 +20,9 @@ import {
   GetPromptRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { resolve } from "path";
+import { createRequire } from "module";
+const _req = createRequire(import.meta.url);
+const { version: HARNESS_VERSION } = _req("../package.json") as { version: string };
 import { toolDefinitions, handleTool } from "./tools.js";
 import { listResources, readResource } from "./resources.js";
 import { promptDefinitions, getPromptContent } from "./prompts.js";
@@ -54,7 +57,7 @@ const ROOT_DIR = resolveRootDir();
 const server = new Server(
   {
     name: "oaa-harness",
-    version: "0.1.0",
+    version: HARNESS_VERSION,
   },
   {
     capabilities: {

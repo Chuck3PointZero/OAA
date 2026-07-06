@@ -20,8 +20,11 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { resolve, join } from "path";
-import { writeFileSync } from "fs";
+import { resolve, join, dirname } from "path";
+import { writeFileSync, mkdirSync } from "fs";
+import { createRequire } from "module";
+const _req = createRequire(import.meta.url);
+const { version: ONTOLOGY_VERSION } = _req("../package.json") as { version: string };
 import { loadPrograms } from "./loader.js";
 import { checkPrograms, type CheckFinding } from "./checker.js";
 import { compileToMarkdown } from "./compiler.js";
@@ -39,6 +42,7 @@ const ROOT_DIR = resolveRootDir();
 
 // Singleton store — initialised on first compile_schema call
 let store: OntologyStore | null = null;
+let storeRootDir: string | null = null;
 
 const toolDefinitions = [
   {
@@ -147,7 +151,7 @@ const toolDefinitions = [
 ];
 
 const server = new Server(
-  { name: "oaa-ontology", version: "0.2.0" },
+  { name: "oaa-ontology", version: ONTOLOGY_VERSION },
   { capabilities: { tools: {} } }
 );
 
@@ -338,10 +342,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
         const schemaSQL = emitSchemaSQL(programs, symbols);
         const schemaPath = join(rootDir, "ontology", "schema.sql");
+        mkdirSync(dirname(schemaPath), { recursive: true });
         writeFileSync(schemaPath, schemaSQL, "utf-8");
 
         // Initialise or re-initialise the store
         store = new OntologyStore(rootDir, symbols, programs);
+        storeRootDir = rootDir;
         const openResult = await store.open(schemaSQL);
 
         const entityCount = [...symbols.entities.values()].filter(e => e.decl.kind === "EntityDecl").length;
@@ -372,6 +378,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       if (!store || !store.isOpen()) {
         return text("Store not initialised. Call compile_schema first.");
       }
+      if (storeRootDir !== rootDir) {
+        return text(`Store was initialised for "${storeRootDir}" — call compile_schema with rootDir "${rootDir}" first.`);
+      }
       const kind = typeof a.kind === "string" ? a.kind : "";
       const id = typeof a.id === "string" ? a.id : "";
       const fields = (typeof a.fields === "object" && a.fields !== null)
@@ -394,6 +403,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case "query_concept": {
       if (!store || !store.isOpen()) {
         return text("Store not initialised. Call compile_schema first.");
+      }
+      if (storeRootDir !== rootDir) {
+        return text(`Store was initialised for "${storeRootDir}" — call compile_schema with rootDir "${rootDir}" first.`);
       }
       const concept = typeof a.concept === "string" ? a.concept : "";
       const filters = (typeof a.filters === "object" && a.filters !== null)

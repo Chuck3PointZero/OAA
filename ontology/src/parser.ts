@@ -78,7 +78,7 @@ class Parser {
 
   private advance(): Token {
     const t = this.tokens[this.pos];
-    this.pos++;
+    if (this.pos < this.tokens.length - 1) this.pos++;
     return t;
   }
 

@@ -12,14 +12,14 @@ metadata:
 
 # Agent: {{Agent Name}}
 
-{{Runtime operating context: environment, dependencies, constraints. Model choice
-is host configuration — record in prose here if useful, never as identity.}}
+{{Only what's non-obvious from the frontmatter and chain — a known operational
+constraint, a deliberate disabled-on-ship reason, an env var that has no obvious
+default. If there's nothing to add, delete this section entirely.}}
+
+{{Delete the Memory section below if this agent has no memory file.}}
 
 ## Memory
 
-`memory/{{state-file}}.json` persists between activations. Excluded from the
-integrity hash (runtime state, mutable by design). Document the schema:
+**Path:** `memory/state.json`
 
-```json
-{{state-schema-example}}
-```
+Schema and field definitions are in the role's `## Memory` section.
