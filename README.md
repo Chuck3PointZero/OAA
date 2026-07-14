@@ -155,6 +155,8 @@ One primitive, four kinds. Every node shares the same frontmatter:
 kind: agent | role | skill | tool
 name: lowercase-hyphenated-name
 description: One sentence. What this is and when to use it.
+executor: llm | remote     # optional, agents only
+models: [tiny]             # optional, agents only
 requires:
   - relative/path/to/required/node
 authority:
@@ -166,6 +168,8 @@ authority:
 ```
 
 Authority composes down the chain: `never` unions (deny wins), `decides` intersects (autonomous only if every layer agrees), `escalates` unions. Anything unlisted defaults to escalate.
+
+For details on the `executor` and `models` agent properties, see [`executor.md`](skills/org-agent-architecture/references/executor.md).
 
 ---
 
