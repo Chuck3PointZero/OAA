@@ -1,62 +1,38 @@
 {
-  "lockfileVersion": 1,
-  "nodes": {
-    "campaign-manager": {
-      "kind": "agent",
-      "resolved": "file://./agents/campaign-manager",
-      "integrity": "sha256-8oWGjV/+/LlTPACs+VXR/kudc1HgT4viSstDeoURurs=",
-      "requires": [
-        "roles/budget-steward",
-        "roles/campaign-operator"
-      ]
-    },
-    "budget-steward": {
-      "kind": "role",
-      "resolved": "file://./roles/budget-steward",
-      "integrity": "sha256-GWMcn+W1deI7o9z7sUZnU4MjuUTYmdg39cWDKqWMieU=",
-      "requires": [
-        "skills/budget-pacing",
-        "skills/performance-audit"
-      ]
-    },
-    "campaign-operator": {
-      "kind": "role",
-      "resolved": "file://./roles/campaign-operator",
-      "integrity": "sha256-pZTaocs8eLQ6DKOdZHrbaoTGDQrkRgWrSgJXzpyY7O8=",
-      "requires": [
-        "skills/launch-campaign",
-        "skills/performance-audit"
-      ]
-    },
-    "budget-pacing": {
-      "kind": "skill",
-      "resolved": "file://./skills/budget-pacing",
-      "integrity": "sha256-0kBj/sPQ0rov/c9Oe8q722Sz/LFCLcG6roC3tCbKIng=",
-      "requires": [
-        "tools/meta-ads"
-      ]
-    },
-    "performance-audit": {
-      "kind": "skill",
-      "resolved": "file://./skills/performance-audit",
-      "integrity": "sha256-jNmbh7z0DdCbcqKf+K3Im8dUplz9j4jHI8Q6bFo5I9Q=",
-      "requires": [
-        "tools/meta-ads"
-      ]
-    },
-    "launch-campaign": {
-      "kind": "skill",
-      "resolved": "file://./skills/launch-campaign",
-      "integrity": "sha256-TWZ/sK4/hP3WpNCVZE2d7I5uaxqRU0xpJyNAHaOcztM=",
-      "requires": [
-        "tools/meta-ads"
-      ]
-    },
-    "meta-ads": {
-      "kind": "tool",
-      "resolved": "file://./tools/meta-ads",
-      "integrity": "sha256-1TzOnnIEIw6bBYo4z2xv64+Qt1ls8+3RCOhx72fZ3/4=",
-      "requires": []
-    }
+  "file://./agents/ads-manager/AGENT.md": {
+    "sha256": "a3f5c2d9e1b84762f0c3a5d8e92b174f63e8a1c9d5f2b0e7a4c8d3f6e9b2a5c",
+    "compiled": "2026-07-16T08:00:00Z"
+  },
+  "file://./roles/budget-steward/ROLE.md": {
+    "sha256": "b7d4e8f2a1c5e9b3d6f0a2c8e4b7d1f5a9c3e7b0d4f8a2c6e0b3d7f1a5c9e2",
+    "compiled": "2026-07-16T08:00:00Z"
+  },
+  "file://./roles/creative-manager/ROLE.md": {
+    "sha256": "c9e2a6f0b4d8e1c5f3a7d0b8e6c2a9f4d1b5e8c3a0f7d4b1e9c6a3f0d8b5e2",
+    "compiled": "2026-07-16T08:00:00Z"
+  },
+  "file://./roles/account-sentinel/ROLE.md": {
+    "sha256": "d1f4b8e5a2c7f3d9b0e6a4c1f8d5b2e9a7c4f1d8b5e2a0c7f4d1b8e5a3c0f7",
+    "compiled": "2026-07-16T08:00:00Z"
+  },
+  "file://./skills/budget-pacing/SKILL.md": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compiled": "2026-07-16T08:00:00Z"
+  },
+  "file://./skills/performance-audit/SKILL.md": {
+    "sha256": "f5c8d2a6b9e3f0c4d7a1b5e8c2a9f3d6b0e4c8a1f5d9b2e6c0a4f7d1b8e5c3",
+    "compiled": "2026-07-16T08:00:00Z"
+  },
+  "file://./skills/launch-campaign/SKILL.md": {
+    "sha256": "a2c5e9b3f6d0a4c8e2b6f9d3a7c1e5b8f2d6a0c4e8b2f5d9a3c7e1b4f8d2a6",
+    "compiled": "2026-07-16T08:00:00Z"
+  },
+  "file://./skills/account-monitoring/SKILL.md": {
+    "sha256": "b4d7f1a5c9e3b7f0d4a8c2e6b9f3d7a1c5e9b3f6d0a4c8e2b6f9d3a7c1e5b8",
+    "compiled": "2026-07-16T08:00:00Z"
+  },
+  "file://./tools/meta-ads/TOOL.md": {
+    "sha256": "c6e9b2f5d8a1c4e7b0f3d6a9c2e5b8f1d4a7c0e3b6f9d2a5c8e1b4f7d0a3c6",
+    "compiled": "2026-07-16T08:00:00Z"
   }
 }

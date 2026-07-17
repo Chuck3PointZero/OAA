@@ -51,7 +51,7 @@ claude skills add Chuck3PointZero/OAA
 
 # Optional: add the MCP servers (compile, validate, run, domain memory)
 claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.4.0:harness
-claude mcp add oaa-ontology -- node --experimental-sqlite $(npx -y @oaa/ontology)
+claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.4.0:ontology
 ```
 
 Once installed, the skill is active in any Claude Code session. Mention OAA or ask to create an agent hierarchy and it activates automatically. The MCP servers are optional but unlock `compile_agent`, `validate_graph`, and the full ontology and memory toolchain.
@@ -134,6 +134,14 @@ Add the harness to Windsurf's MCP settings under Cascade → MCP Servers.
 
 ---
 
+## Upgrading to v0.4.0
+
+**Breaking change — `agents.lock` key format.** Lockfile entries are now keyed by resolved path (e.g. `file://./agents/foo/AGENT.md`) instead of the node's `name`. A lockfile from any earlier version is incompatible and will make stale-detection treat every node as unknown. After upgrading, **delete `agents.lock` and re-run `compile_agent`** to regenerate it.
+
+Also new in v0.4.0: the `executor: llm | remote` field on agents — `llm` (default) hands the compiled `AGENTS.md` to a local model via `--system-prompt-file`; `remote` POSTs the identical file to any OpenAI-compatible endpoint named in `metadata.remote`; the compile output is the same either way; `models: [tiny]` compact rewrites (Pass 2) via `get_compact_prompt_template`; `validate_graph` now walks `requires` in ROLE.md and SKILL.md (not just AGENT.md) and enforces stored SHA-256 integrity hashes; a `query_concept` SQL-injection guard; and both servers now report their version from `package.json`. Full detail in [harness/CHANGELOG.md](harness/CHANGELOG.md) and [ontology/CHANGELOG.md](ontology/CHANGELOG.md).
+
+---
+
 ## What You Get
 
 Once the OAA skill is active, your agent understands the convention and can:
@@ -145,6 +153,7 @@ Once the OAA skill is active, your agent understands the convention and can:
 - **Compile** — walk the full chain and produce a runtime `AGENTS.md` from source; update `agents.lock`
 - **Decompose** — split roles, extract shared skills, apply the connector/capability split for MCP servers
 - **Model the domain** — write `.rel` ontology files that define business concepts, derived rules, and tool vocabulary maps; compile to `ONTOLOGY.md` and a SQLite entity store that skills write to and roles query
+- **Compact for small models** — when an agent declares `models: [tiny]`, `compile_agent` also writes `AGENTS.orig.md` and flags `compactNeeded`, cueing a Pass 2 compact rewrite via `get_compact_prompt_template` before the agent runs
 
 ### The Core Model
 
@@ -169,7 +178,69 @@ authority:
 
 Authority composes down the chain: `never` unions (deny wins), `decides` intersects (autonomous only if every layer agrees), `escalates` unions. Anything unlisted defaults to escalate.
 
-For details on the `executor` and `models` agent properties, see [`executor.md`](skills/org-agent-architecture/references/executor.md).
+For the `models` hints (`tiny`, etc.), see [`executor.md`](skills/org-agent-architecture/references/executor.md).
+
+### Remote Executors (`executor: remote`)
+
+Every agent declares an `executor`. Omit it (or set `llm`) and the agent runs on a **local** LLM, handed the compiled `AGENTS.md` via `--system-prompt-file`. Set **`executor: remote`** and that *same* `AGENTS.md` is instead dispatched as the system prompt in a POST body to an external **OpenAI-compatible endpoint**. `compile_agent` emits identical output for both — the executor is read by the runner at dispatch time, never by the compiler — so any agent can move between local and remote by changing one field.
+
+A remote agent must carry a `metadata.remote` block naming the env vars that hold its endpoint, model, and key:
+
+```yaml
+---
+kind: agent
+name: inbound-support
+executor: remote
+models: [tiny]
+fills:
+  - ../../roles/inbound-support-triage
+metadata:
+  remote:
+    endpoint_env: "INBOUND_AI_ENDPOINT"   # env var: OpenAI-compatible URL
+    model_env:    "INBOUND_AI_MODEL"       # env var: model name
+    auth_env:     "INBOUND_AI_KEY"         # env var: API key
+  schedule: "*/5 * * * *"
+---
+```
+
+Two things are **non-negotiable** for remote agents:
+
+- **Authority is only as strong as the gateway.** A remote endpoint is *not* bound by the `AGENTS.md` system prompt — a hosted model can disregard any instruction it's handed. The composed `never` list becomes a real boundary only where it's enforced at the **tool-call level**. For `executor: remote`, that gateway is the *sole* hard boundary: treat the prompt as advisory and put the teeth in the tool layer. See [`authority-model.md`](skills/org-agent-architecture/references/authority-model.md).
+- **Memory schema must be complete.** The runner injects the role's `## Memory` section into the system prompt. If field names aren't documented in ROLE.md, the remote model invents them — so fully populate `## Memory` on every role a remote agent fills.
+
+---
+
+## System Prompts & Generated Files
+
+You author node files — `ROLE.md`, `SKILL.md`, `TOOL.md`, `AGENT.md`. The compilers generate all the runtime prompts from them. Generated files are build artifacts — regenerate them from source, never hand-edit them.
+
+```
+company/               ← the wrapper root (OAA_ROOT)
+├── CLAUDE.md          ← the OAA skill — installed via npx skills add
+├── agents.lock
+├── agents/<name>/
+│   ├── AGENTS.md      ← generated per agent — the runtime system prompt
+│   └── COMPANY.md     ← generated by the OAA skill — plain-English org chart
+├── roles/  skills/  tools/
+└── ontology/
+    ├── *.rel          ← authored ontology source
+    └── ONTOLOGY.md    ← generated — the compiled domain vocabulary
+```
+
+**`CLAUDE.md` — the OAA skill.** Installed at the `company/` root via `npx skills add Chuck3PointZero/OAA`. This file IS the skill — it is what makes any AI assistant working in the tree aware of the OAA convention and how to compile agents. It is not generated from node files; it is what generates everything else.
+
+**`AGENTS.md` — the agent's runtime system prompt (generated by `org-agent-architecture`).** `compile_agent` walks the full AGENT → ROLE → SKILL → TOOL chain and writes a single `AGENTS.md` into the agent's directory, stamped with a `<!-- GENERATED — do not hand-edit -->` preamble. It inlines every tool's `never` rules verbatim, plus the memory schema, run order, escalation dispatch, and an env-var table (names only). At run time this file **replaces** the host's default system prompt — it *is* the agent, not a description of it. Edit the source nodes and recompile; never touch `AGENTS.md` directly. (An `executor: remote` agent gets the same file POSTed to its endpoint — see [Remote Executors](#remote-executors-executor-remote).)
+
+**`COMPANY.md` — the plain-English org chart (generated by `org-agent-architecture`).** The OAA skill reads the full node graph and produces a human-readable reference that maps every role to its agent, schedule, and authority boundaries. Intended for managers and compliance reviewers — people who need to understand the agent org without opening a node file. Regenerate it when roles or authority blocks change.
+
+**`ONTOLOGY.md` — the compiled domain vocabulary (generated by `oaa-ontology-design`).** `compile_ontology` parses the `.rel` sources in `ontology/` and writes `ONTOLOGY.md` alongside a `schema.sql` and a SQLite entity store. Skills write runtime entities into the store; roles query derived concepts without re-hitting external APIs. The harness reads `ONTOLOGY.md` via `get_ontology` but never writes to `ontology/` — only the ontology server regenerates it. Edit the `.rel` sources, not the compiled file.
+
+| File | Source | Role |
+|------|--------|------|
+| `CLAUDE.md` | Installed (`npx skills add`) | The OAA skill — tells the AI assistant the whole convention |
+| `AGENTS.md` | Generated by `compile_agent` | The agent's runtime system prompt |
+| `COMPANY.md` | Generated by `org-agent-architecture` skill | Plain-English org chart for humans |
+| `ONTOLOGY.md` | Generated by `compile_ontology` | Compiled domain vocabulary + entity store |
 
 ---
 
@@ -177,12 +248,14 @@ For details on the `executor` and `models` agent properties, see [`executor.md`]
 
 To roll OAA out across a team or organization, add this to your Claude Code project settings (`.claude/settings.json`):
 
+<!-- NOTE: default branch is `master` (there is no `main`), and `.agents/marketplace.json` does not yet exist in the repo. Add that file on `master`, or update this sourceURL to wherever the marketplace manifest actually lives, before publishing these instructions. -->
+
 ```json
 {
   "extraKnownMarketplaces": [
     {
       "name": "OAA",
-      "sourceURL": "https://raw.githubusercontent.com/Chuck3PointZero/OAA/main/.agents/marketplace.json"
+      "sourceURL": "https://raw.githubusercontent.com/Chuck3PointZero/OAA/master/.agents/marketplace.json"
     }
   ]
 }
@@ -229,6 +302,7 @@ Distributed from this repo via tagged git refs, not the npm registry — see [ha
 | `get_status(name)` | Returns last run state and escalation log from memory/ |
 | `get_ontology()` | Returns compiled ONTOLOGY.md if present |
 | `run_agent(name)` | Returns AGENTS.md content, ready to hand to an LLM — see "Running a Compiled Agent" below for the launch command |
+| `get_compact_prompt_template()` | Returns the Pass 2 compact-rewrite template (new in v0.4.0; embedded in the binary, so it works from any install path). Used when a `models: [tiny]` agent compiles with `compactNeeded` |
 
 See [harness/README.md](harness/README.md) for the full reference.
 
@@ -236,12 +310,14 @@ See [harness/README.md](harness/README.md) for the full reference.
 
 Compiles `.rel` source files into a canonical `ONTOLOGY.md` and a SQLite entity store. Skills write runtime values after fetching from external APIs; roles query derived concepts without re-calling the API.
 
+Distributed from this repo via tagged git refs, not the npm registry — neither `@oaa/harness` nor `@oaa/ontology` is published to npm. Requires Node 22.5+ for the built-in `node:sqlite` module, launched with `--experimental-sqlite` (passed below via `NODE_OPTIONS`).
+
 ```bash
 # Claude Code (Node 22.5+ required for built-in SQLite)
-claude mcp add oaa-ontology -- node --experimental-sqlite $(npx -y @oaa/ontology)
+claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.4.0:ontology
 
 # Any MCP-compatible host
-node --experimental-sqlite node_modules/@oaa/ontology/dist/index.js --root /path/to/company
+NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.4.0:ontology --root /path/to/company
 ```
 
 | Tool | What it does |
@@ -265,9 +341,9 @@ See [ontology/README.md](ontology/README.md) for the full reference.
       "args": ["-y", "github:Chuck3PointZero/OAA#v0.4.0:harness", "--root", "/path/to/company"]
     },
     "oaa-ontology": {
-      "command": "node",
-      "args": ["--experimental-sqlite", "/path/to/node_modules/@oaa/ontology/dist/index.js"],
-      "env": { "OAA_ROOT": "/path/to/company" }
+      "command": "npx",
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.4.0:ontology", "--root", "/path/to/company"],
+      "env": { "NODE_OPTIONS": "--experimental-sqlite" }
     }
   }
 }
@@ -277,7 +353,7 @@ See [ontology/README.md](ontology/README.md) for the full reference.
 
 ## Running a Compiled Agent
 
-`AGENTS.md` is not a record of the compile — it IS the payload. "Running" an agent means handing that file to an LLM as its complete operating instructions. There's no separate launch mechanism beyond that handoff, and this is the same regardless of what triggers it.
+`AGENTS.md` is not a record of the compile — it IS the payload. "Running" an agent means handing that file to an LLM as its complete operating instructions. There's no separate launch mechanism beyond that handoff, and this is the same regardless of what triggers it. The command below is the **`executor: llm`** path; an **`executor: remote`** agent is handed the identical `AGENTS.md` as a POST to the endpoint named in its `metadata.remote` block instead of a local `--system-prompt-file` launch — same payload, different transport.
 
 The principle is host-agnostic; the concrete command below is the Claude Code instantiation, using the `ads-manager` / `meta-ads` worked example from [`references/example-meta-ads.md`](skills/org-agent-architecture/references/example-meta-ads.md):
 

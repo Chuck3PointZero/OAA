@@ -3,7 +3,7 @@ kind: skill
 name: budget-pacing
 description: Adjusts daily campaign budgets to maintain on-pace spend; increases or decreases within the bounds declared on the calling role.
 allowed-tools:
-  - tools/meta-ads
+  - ../../tools/meta-ads
 authority:
   escalates:
     - repeated-tool-failure   # if update_campaign fails 3× in one activation, escalate rather than retry

@@ -16,6 +16,7 @@ entity Campaign {
   property objective : CampaignObjective
   property start-date : Date
   property end-date : Date
+  property rolling-3day-cpa : Float @computed   // total spend / total conversions over last 72h
   constraint valid-dates: start-date <= end-date
   relation runs-on : Channel [many-to-many]
   relation targets : Audience [many-to-many]
@@ -32,6 +33,12 @@ entity Audience {
   identified-by: AudienceID
   property name : String
   property size : Integer
+}
+
+// Derived: campaigns with cost-per-acquisition above the acceptable threshold.
+// Used by performance-audit to surface which campaigns to pause or adjust.
+entity UnderachievingCampaign extends Campaign {
+  where: rolling-3day-cpa > 35
 }
 
 // Derived: campaigns with budget above the high-value threshold.

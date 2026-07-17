@@ -41,10 +41,11 @@ There's no published build artifact in git (`dist/` is gitignored) — installin
 
 | Tool | Arguments | What it does |
 |------|-----------|--------------|
-| `compile_agent` | `name` (required), `rootDir` | Walks AGENT → ROLE → SKILL → TOOL chain, composes authority, writes `AGENTS.md`, merges every required tool's `server/mcp.json` into one `mcp-config.json`, updates `agents.lock` |
-| `validate_graph` | `rootDir` | Runs the full validation checklist. Returns errors (must fix), warnings (should fix), gaps (decide). Verdict: `VALID \| VALID-WITH-WARNINGS \| INVALID` |
+| `compile_agent` | `name` (required), `rootDir` | Walks AGENT → ROLE → SKILL → TOOL chain, composes authority, writes `AGENTS.md`, merges every required tool's `server/mcp.json` into one `mcp-config.json`, updates `agents.lock`. If the agent's `AGENT.md` declares `models: [tiny]`, also copies `AGENTS.md` → `AGENTS.orig.md` and returns `compactNeeded: true` — signal for Pass 2 compact rewriting |
+| `validate_graph` | `rootDir` | Runs the full validation checklist, including `requires` resolution in ROLE.md and SKILL.md and stale-hash detection in `agents.lock`. Returns errors (must fix), warnings (should fix), gaps (decide). Verdict: `VALID \| VALID-WITH-WARNINGS \| INVALID` |
 | `get_status` | `name`, `rootDir` | Returns compile state, last compile time, resolved chain, recent `memory/` entries |
 | `get_ontology` | `rootDir` | Returns `ONTOLOGY.md` if present — the compiled vocabulary shared across all agents |
+| `get_compact_prompt_template` | _(none)_ | Returns the Pass 2 rewriting template. Call after `compile_agent` when `compactNeeded: true`; follow its instructions to compact `AGENTS.orig.md` → `AGENTS.md` without dropping tool names, env vars, or `never` rules. Ships embedded in the server binary — no filesystem dependency |
 | `run_agent` | `name`, `rootDir`, `input` | Returns the compiled `AGENTS.md` content, ready to hand to an LLM as its full operating instructions. Execution is intentionally out of scope — see the OAA README's "Running a Compiled Agent" section for the concrete launch command |
 
 ---
@@ -91,21 +92,24 @@ Every release is tagged in git (`v0.2.0`, `v0.4.0`, ...) with notes in `CHANGELO
 
 Each tagged version corresponds to one `package.json` version bump and one `CHANGELOG.md` entry — if a release changes validator behavior (like 0.2.0's Tool Wiring generalization or 0.3.0's enforcement-gap acknowledgment), check the changelog before upgrading, since `validate_graph` findings on an existing workspace can change.
 
+**Upgrading to 0.4.0 — breaking change:** `agents.lock` entries are now keyed by resolved path (`file://./agents/foo/AGENT.md`) instead of the node's declared `name` field. Delete `agents.lock` at your workspace root and re-run `compile_agent` to regenerate it. No source files need to change.
+
 ---
 
 ## How Compilation Works
 
 `compile_agent` does the following in order:
 
-1. Read `AGENT.md` — collect `fills` and `metadata`
+1. Read `AGENT.md` — collect `fills`, `executor`, `models`, and `metadata`
 2. For each role: read `ROLE.md`, collect `owns / decides / escalates / never / requires`
-3. For each skill: read `SKILL.md`, collect workflow steps and `authority.escalates`
+3. For each skill: read `SKILL.md`, collect workflow steps, `authority.escalates`, and `requires`
 4. For each tool: read `TOOL.md`, collect `authority.never`, `env`, declared functions
-5. Check `agents.lock` — if all hashes match, `AGENTS.md` is current; stop
+5. Check `agents.lock` (keyed by resolved path, e.g. `file://./agents/foo/AGENT.md`) — if all SHA-256 hashes match, `AGENTS.md` is current; stop
 6. Validate the resolved chain; abort on errors
 7. Write `AGENTS.md` with preamble, hard limits, memory schema, run order, escalation dispatch, env table
 8. Merge every required `type: mcp` tool's `server/mcp.json` into one `mcp-config.json`, written next to `AGENTS.md`. A tool missing its `server/mcp.json` is reported, not silently skipped — `--mcp-config` would otherwise fail at run time with no compile-time signal.
 9. Update `agents.lock` with fresh hashes
+10. _(Pass 2, only when `models: [tiny]`)_ Copy `AGENTS.md` → `AGENTS.orig.md` and return `compactNeeded: true`. The caller should then invoke `get_compact_prompt_template()` and rewrite `AGENTS.orig.md` → `AGENTS.md` compactly, preserving every tool name, env var, and `never` rule verbatim.
 
 The compiler never calls external tools or modifies source nodes. It is a pure read-then-write operation on the file graph.
 

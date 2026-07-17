@@ -3,7 +3,7 @@ kind: skill
 name: launch-campaign
 description: Creates and activates a new campaign on Meta Ads from an approved brief; maps business-domain fields to API vocabulary using the ontology tool map.
 allowed-tools:
-  - tools/meta-ads
+  - ../../tools/meta-ads
 authority:
   escalates:
     - brief-missing-required-fields

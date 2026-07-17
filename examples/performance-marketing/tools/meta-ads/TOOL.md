@@ -12,7 +12,7 @@ provenance:
   pinned-in: agents.lock
 authority:
   never:
-    - daily-budget-over-500-per-campaign    # hard ceiling regardless of role grant
+    - daily-budget-over-200-per-campaign    # hard ceiling regardless of role grant; no role can widen
     - activate-campaign-without-approval    # human gate always required for activation
     - modify-targeting-on-any-campaign      # targeting changes always require human review
     - delete-campaign                       # irreversible; never autonomous

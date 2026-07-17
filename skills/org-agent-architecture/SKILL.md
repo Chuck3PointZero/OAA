@@ -132,6 +132,22 @@ If `compile_agent` returns `compactNeeded: true` (the agent's `AGENT.md` has `mo
 5. Write the compact result to `AGENTS.md`, with `<!-- compacted: see AGENTS.orig.md for the narrative source -->` as the first line.
 6. If the fact-retention check fails, leave `AGENTS.md` as the narrative version Pass 1 wrote and report what was missing. The next `compile_agent` call will retry automatically.
 
+## Workflow: Compile Company Map
+
+`COMPANY.md` is a generated artifact — the plain-English reference that maps every role to its agent, schedule, and authority boundaries without requiring a reader to open the full node tree. Never hand-edit it; regenerate it whenever any `AGENT.md`, `ROLE.md`, or `SKILL.md` in the graph changes.
+
+1. **Read every node in the graph.** For each agent: `AGENT.md` frontmatter (name, `fills`, `metadata.schedule`). For each role those agents fill: `ROLE.md` frontmatter (`owns`, `decides`, `escalates`, `never`) and body prose. For each skill those roles require: `SKILL.md` frontmatter (`name`, `description`, `allowed-tools`). For each tool those skills reference: `TOOL.md` frontmatter (`name`). Do not read upward or laterally.
+
+2. **Apply the company-map prompt.** Read `assets/prompts/company-map-system-prompt.md` (in this skill's directory). Pass the collected node data to that prompt and synthesize `COMPANY.md` prose.
+
+3. **Verify before writing.** Every role in the graph must appear in the Roles section. Every agent must appear in the mapping table. No authority rule, threshold, or tool name in the output may be absent from the source nodes. If any invented content is detected, abort and report what was fabricated.
+
+4. **Write `COMPANY.md`** to the OAA wrapper root (the directory containing `agents/`, `roles/`, `skills/`, `tools/`). The first line after the heading must be:
+
+   ```markdown
+   <!-- GENERATED — do not hand-edit. Regenerate by following the "Compile Company Map" workflow in the OAA skill. -->
+   ```
+
 ## Workflow: Ontology and Memory
 
 The `@oaa/ontology` MCP server exposes a domain vocabulary compiler and a SQLite-backed entity store. Together they provide the shared memory layer that roles use to reason without re-fetching from external APIs on every decision.
