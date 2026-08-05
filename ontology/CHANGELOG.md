@@ -2,6 +2,12 @@
 
 All notable changes to `@oaa/ontology` are documented here.
 
+## 0.5.0 — 2026-08-05
+
+### Changed
+
+- **Version bump for alignment with `@oaa/harness` v0.5.0.** No functional changes in this release, but updated to stay in sync with the core architecture and authority algebra updates.
+
 ## 0.4.0 — 2026-07-06
 
 ### Security

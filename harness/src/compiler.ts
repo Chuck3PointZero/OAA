@@ -184,7 +184,7 @@ export function resolveChain(
   // Search for the agent node
   const candidates = glob.sync(
     `**/{AGENT.md,*.agent.md}`,
-    { cwd: rootDir, absolute: true }
+    { cwd: rootDir, absolute: true, ignore: ["**/node_modules/**"] }
   );
 
   let agentFile: string | null = null;
@@ -230,7 +230,7 @@ export function composeAuthority(chain: ResolvedChain): ComposedAuthority {
     if (tool.frontmatter.env) envVars.add(tool.frontmatter.env);
   }
 
-  // Roles contribute decides (intersection), escalates (union), owns, never
+  // Roles contribute decides (union), escalates (union), owns, never
   for (const role of chain.roles) {
     const auth = role.frontmatter.authority;
     if (!auth) continue;
@@ -247,13 +247,14 @@ export function composeAuthority(chain: ResolvedChain): ComposedAuthority {
     if (auth?.never) auth.never.forEach((n) => never.add(n));
   }
 
-  // Intersection of decides: only items present in ALL role decides lists
-  let decidesResult: string[] = [];
-  if (decideSets.length > 0) {
-    decidesResult = decideSets[0].filter((item) =>
-      decideSets.every((set) => set.includes(item))
-    );
+  // Union of decides: grants accumulate. An agent filling several roles holds the
+  // sum of their grants, and an empty `decides: []` contributes nothing rather than
+  // zeroing its siblings. Narrowing is `never`'s job — applied below.
+  const decidesUnion = new Set<string>();
+  for (const set of decideSets) {
+    for (const item of set) decidesUnion.add(item);
   }
+  const decidesResult = [...decidesUnion];
 
   // never wins over decides
   const finalDecides = decidesResult.filter((d) => !never.has(d));
@@ -300,6 +301,17 @@ export function renderAgentsMd(
     lines.push(`**Fills:** ${roles.map((r) => r.name).join(", ")}  `);
   }
   lines.push("");
+
+  // Agent's own narrative body (AGENT.md content below its frontmatter). Always
+  // included, independent of whether this agent fills any roles — this is the
+  // one place an agent's own instructions/context can live, and previously this
+  // function silently dropped it entirely (only role.body/skill.body were ever
+  // rendered), so a role-less agent compiled to nothing but an identity line and
+  // an empty authority block.
+  if (agent.body) {
+    lines.push(agent.body);
+    lines.push("");
+  }
 
   // Roles
   if (roles.length > 0) {
@@ -593,6 +605,7 @@ export function validateGraph(rootDir: string): ValidationResult {
   const agentFiles = glob.sync(`**/{AGENT.md,*.agent.md}`, {
     cwd: rootDir,
     absolute: true,
+    ignore: ["**/node_modules/**"],
   });
 
   if (agentFiles.length === 0) {

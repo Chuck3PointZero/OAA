@@ -73,7 +73,7 @@ export interface ResolvedChain {
 
 export interface ComposedAuthority {
   never: string[];       // union of all tool/role never fields
-  decides: string[];     // intersection of all role decides fields
+  decides: string[];     // union of all role decides fields
   escalates: string[];   // union of all role/skill escalates fields
   owns: string[];        // union of all role owns fields
   doesNotOwn: string[];  // role never fields (non-ownership boundaries)

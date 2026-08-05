@@ -6,7 +6,8 @@ fills:                               # agent-kind spelling of `requires`
   - ../../roles/{{role-name}}        # one line per role; the agent inherits their skills
 metadata:
   schedule: "{{cron-or-trigger}}"    # e.g., "0 8 * * *"; omit if event-driven
-# NO authority block. The agent inherits the intersection of its chain.
+# NO authority block. The agent inherits the union of its chain's grants,
+# bounded by every `never` declared anywhere in it.
 # Declaring authority here is almost always a mistake — it belongs on a role.
 ---
 

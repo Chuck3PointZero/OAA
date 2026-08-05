@@ -21,7 +21,7 @@ This skill applies the Organizational Agent Architecture (OAA) convention for st
   - **Directory form** (default): `AGENT.md` / `ROLE.md` / `SKILL.md` / `TOOL.md` inside a named directory — use when the node has sub-folders (`memory/`, `decisions/`, `server/`) or supporting assets.
   - **Flat-file form**: `<name>.agent.md` / `<name>.role.md` / `<name>.skill.md` / `<name>.tool.md` — use when the node is self-contained in a single file with no sub-folders.
 - **`requires` is the only edge.** It points to the next layer down. Never lateral or upward. Kind aliases: agents may spell it `fills`; skills may spell it `allowed-tools` (agentskills.io compatibility).
-- **Authority composes by intersection.** `never` accumulates by union (deny wins everywhere), `decides` intersects (autonomous only if every declaring layer permits), `escalates` accumulates by union. Precedence: `never` > `escalates` > `decides`. **Anything listed nowhere defaults to escalate.** A layer can only narrow what it inherits — never widen it.
+- **Authority composes by union.** `never` accumulates by union (deny wins everywhere), `decides` accumulates by union (autonomous if any declaring layer permits), `escalates` accumulates by union. Precedence: `never` > `escalates` > `decides`. **Anything listed nowhere defaults to escalate.** Narrowing is `never`'s job — a `never` anywhere in the chain overrides every grant, and no layer can remove one declared below it.
 - **`agents.lock`** at the repository root pins every resolved node by path and content hash. Generated, committed, never hand-edited. Hashes exclude `README.md`, `memory/`, and `decisions/` (narrative and runtime state are not identity).
 
 Before composing or auditing any authority block, read `references/authority-model.md`. Before declaring a structure valid, run `references/validation.md`. For a complete worked example of every pattern below, read `references/example-meta-ads.md`.
@@ -72,7 +72,7 @@ company/
 
 ## Workflow: Author Authority
 
-Place each constraint at the **one layer that owns it** — the intersection rule propagates it everywhere, and duplication creates copies that drift:
+Place each constraint at the **one layer that owns it** — the composition rules propagate it everywhere, and duplication creates copies that drift:
 
 - **Hard ceilings and physical-safety rules → tool `never`.** These must hold regardless of which role calls the capability ("daily-budget-over-200", "send-to-unverified-address").
 - **Decision rights and human thresholds → role `decides` / `escalates`.** This is the job description ("budget-change-within-20pct-per-24h" decides; "account-policy-flag" escalates).
@@ -261,7 +261,7 @@ authority:                                 # omit entirely on agents
 {{Operating prose. Prose never grants or restricts — only the frontmatter composes.}}
 ```
 
-Kind extras, one line each: **tool** adds `type: api|mcp|local` and `env: ENV_VAR_NAME`; **role** adds `watches: [...]` and a `decisions/` folder; **agent** adds `metadata: {schedule: ...}` and a `memory/` folder; **skill** keeps the body as the workflow steps. Composition rules: `never` unions, `decides` intersects, `escalates` unions, precedence `never` > `escalates` > `decides`, unlisted actions escalate by default.
+Kind extras, one line each: **tool** adds `type: api|mcp|local` and `env: ENV_VAR_NAME`; **role** adds `watches: [...]` and a `decisions/` folder; **agent** adds `metadata: {schedule: ...}` and a `memory/` folder; **skill** keeps the body as the workflow steps. Composition rules: `never` unions, `decides` unions, `escalates` unions, precedence `never` > `escalates` > `decides`, unlisted actions escalate by default.
 
 ## Tool Types
 

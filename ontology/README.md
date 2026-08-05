@@ -89,20 +89,11 @@ The server exposes three tools, callable by any MCP-compatible agent:
 ## Installation
 
 ```bash
-npm install @oaa/ontology
-```
+# Claude Code
+claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology
 
-Register with Claude Code (add to your `claude_mcp_config.json` or run via `claude mcp add`):
-
-```json
-{
-  "mcpServers": {
-    "oaa-ontology": {
-      "command": "npx",
-      "args": ["-y", "@oaa/ontology", "--root", "/path/to/your/workspace"]
-    }
-  }
-}
+# Any MCP-compatible host
+NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology --root /path/to/company
 ```
 
 The `--root` argument (or `OAA_ROOT` environment variable) must point to the directory that contains your `ontology/` folder.

@@ -1,6 +1,6 @@
 {
   "name": "@oaa/ontology",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "OAA ontology compiler and MCP server — compile .rel source files into ONTOLOGY.md",
   "type": "module",
   "bin": {

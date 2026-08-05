@@ -2,6 +2,33 @@
 
 All notable changes to `@oaa/harness` are documented here.
 
+## 0.5.0 — 2026-08-05
+
+### ⚠ Behavior change — multi-role agents gain autonomous authority
+
+- **`decides` now composes by union, not intersection.** `composeAuthority` intersected the `decides` lists of every role an agent fills. Because no two roles of a well-formed agent share grants — `owns` is required to be disjoint, so their decision rights are disjoint by construction — the intersection was empty for every agent filling more than one role. Those agents compiled to `decides: (none)` and escalated everything.
+
+  Grants now accumulate: an agent filling several roles holds the sum of their decision rights, bounded as always by every `never` in the chain and by the unchanged precedence `never` > `escalates` > `decides`.
+
+  **This widens authority on upgrade.** Any multi-role agent will, after recompiling, act autonomously where it previously escalated — which is the correct behavior, but it is a real change in posture. Recompile every multi-role agent and review the resulting `decides` list before running them unattended. Single-role agents are unaffected (intersection of one set is itself, which is why this went unnoticed).
+
+  Regression symptom if this ever returns: `decides: (none)` on an agent that fills more than one role.
+
+- **An empty `decides: []` is now explicitly transparent.** It contributes nothing to the union rather than zeroing its siblings. This is the pure-watcher pattern — a role that owns a domain and deliberately makes no autonomous decisions in it (see `account-sentinel` in `examples/performance-marketing`). Forbidding is `never`'s job; an empty grant list is not a prohibition. The spec previously left this ambiguous.
+
+### Added
+
+- **Introduction slide deck.** A 13-slide technical introduction to OAA in `docs/introduction/`, covering architecture, authority, ontology, and compilation.
+
+### Fixed
+
+- **Agent narrative body is rendered into `AGENTS.md`.** `renderAgentsMd` emitted role and skill bodies but silently dropped the agent's own prose below its frontmatter. An agent that fills no roles compiled to an identity line and an empty authority block — everything its `AGENT.md` actually said was discarded. The body is now always rendered, independent of role count.
+- **Node discovery skips `node_modules`.** The `**/{AGENT.md,*.agent.md}` globs in `resolveChain` and `validateGraph` now pass `ignore: ["**/node_modules/**"]`. Vendored packages shipping a file named `Agent.md` (undici, among others) were matching as workspace agent nodes and producing false positives in both resolution and validation.
+
+### Changed
+
+- **Documentation corrected repo-wide.** Intersection was stated in `references/authority-model.md`, `SKILL.md`, `AGENT.template.md`, `README.md`, the introduction deck, and three strings in `prompts.ts` — including the manual-compile fallback that instructs a model how to compose authority by hand when `compile_agent` is unavailable. All now state union. `docs/PROPOSALv2.md` is left as written; it is a superseded design document.
+
 ## 0.4.0 — 2026-07-06
 
 ### Added

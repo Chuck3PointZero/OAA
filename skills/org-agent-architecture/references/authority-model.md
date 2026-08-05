@@ -19,7 +19,7 @@ Omit any field with no content. Every identifier is a lowercase, hyphenated stri
 Given an active path `AGENT → ROLE → SKILL → … → TOOL`:
 
 1. **`never` — union.** Every `never` declared by any node on the path applies. Nothing removes a `never`; not a role above it, not a human instruction routed through the agent. (Humans act outside the chain — directly in the underlying system — or formally amend the declaring node through review.)
-2. **`decides` — intersection.** An action is autonomous only if every node on the path that declares a `decides` includes it. Nodes that declare no `decides` are transparent — they neither grant nor block.
+2. **`decides` — union.** An action is autonomous if any node on the path declares it. Grants accumulate: a role's `decides` names what that role may do without asking, and an agent filling several roles holds the sum of them. A node that declares no `decides`, or declares an empty `decides: []`, contributes nothing — it neither grants nor blocks. An empty list is a deliberate statement that the node makes no autonomous decisions (a pure watcher), not a statement that it forbids them; forbidding is `never`'s job.
 3. **`escalates` — union.** Any node may add a trigger; none may remove one.
 4. **Precedence: `never` > `escalates` > `decides`.** A match in a stronger field wins regardless of weaker matches elsewhere.
 5. **Default disposition: escalate.** An action matching nothing on the path is neither permitted nor forbidden — it is asked about. Log every default escalation in the owning role's `decisions/` folder; each is a missing line in a role definition.

@@ -4,7 +4,7 @@
 **Subtitle:** Structure your agents like you structure your company
 **Audience:** Developers and architects building multi-agent systems
 **Format:** 13 slides, ~30–40 minutes with Q&A
-**Version:** v0.4.0
+**Version:** v0.5.0
 
 ---
 
@@ -45,7 +45,7 @@ The presentation moves through three acts:
 ---
 
 ### Slide 5 — The Authority Block
-**Key message:** `owns`, `decides`, `escalates`, `never` — the same four fields at every layer, with fixed composition rules: `never` unions, `decides` intersects, `escalates` unions, unlisted defaults to escalate.
+**Key message:** `owns`, `decides`, `escalates`, `never` — the same four fields at every layer, with fixed composition rules: `never` unions, `decides` unions, `escalates` unions, unlisted defaults to escalate.
 **Notes file:** [slide-05-authority-block.md](slide-05-authority-block.md)
 
 ---

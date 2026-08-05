@@ -17,7 +17,7 @@ Triggered by calling the `@oaa/harness` MCP tool `compile_agent(agentPath)`.
 
 **What it does:**
 1. Walks AGENT → ROLE(s) → SKILL(s) → TOOL(s) following every `requires`/`fills` edge
-2. Composes authority at each layer (never unions, decides intersects, escalates unions)
+2. Composes authority at each layer (never unions, decides unions, escalates unions)
 3. Writes `AGENTS.md` — the agent's complete runtime system prompt
 4. Writes `mcp-config.json` — the tool server configuration for this agent's run
 5. Updates `agents.lock` — adds or refreshes every resolved node entry

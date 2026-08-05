@@ -19,7 +19,7 @@ authority:
 | Field | How it composes down the chain | English |
 |---|---|---|
 | `never` | **Union** (deny wins everywhere) | If ANY layer forbids it, it's forbidden |
-| `decides` | **Intersection** (autonomous only if all agree) | ALL layers must allow it for autonomous action |
+| `decides` | **Union** (grants accumulate) | ANY layer granting it makes it autonomous |
 | `escalates` | **Union** | ANY layer can add an escalation trigger |
 | unlisted | Defaults to **escalate** | Not forbidden, not permitted — asked about |
 

@@ -50,8 +50,8 @@ npx skills update
 claude skills add Chuck3PointZero/OAA
 
 # Optional: add the MCP servers (compile, validate, run, domain memory)
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.4.0:harness
-claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.4.0:ontology
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.5.0:harness
+claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology
 ```
 
 Once installed, the skill is active in any Claude Code session. Mention OAA or ask to create an agent hierarchy and it activates automatically. The MCP servers are optional but unlock `compile_agent`, `validate_graph`, and the full ontology and memory toolchain.
@@ -68,7 +68,7 @@ Add to your project's `.cursor/mcp.json`:
   "mcpServers": {
     "oaa": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.4.0:harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.5.0:harness"]
     }
   }
 }
@@ -113,7 +113,7 @@ Add the OAA harness to your `claude_desktop_config.json`:
   "mcpServers": {
     "oaa": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.4.0:harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.5.0:harness"]
     }
   }
 }
@@ -134,11 +134,16 @@ Add the harness to Windsurf's MCP settings under Cascade → MCP Servers.
 
 ---
 
-## Upgrading to v0.4.0
+## Upgrading to v0.5.0
 
-**Breaking change — `agents.lock` key format.** Lockfile entries are now keyed by resolved path (e.g. `file://./agents/foo/AGENT.md`) instead of the node's `name`. A lockfile from any earlier version is incompatible and will make stale-detection treat every node as unknown. After upgrading, **delete `agents.lock` and re-run `compile_agent`** to regenerate it.
+**Breaking change — `decides` union.** Authority composition for `decides` (autonomous actions) has changed from **intersection** (intersection of all roles) to **union** (the sum of all roles). An agent filling multiple roles now holds the combined autonomous authority of all its roles. Prohibitions (`never`) still union and still override all grants.
 
-Also new in v0.4.0: the `executor: llm | remote` field on agents — `llm` (default) hands the compiled `AGENTS.md` to a local model via `--system-prompt-file`; `remote` POSTs the identical file to any OpenAI-compatible endpoint named in `metadata.remote`; the compile output is the same either way; `models: [tiny]` compact rewrites (Pass 2) via `get_compact_prompt_template`; `validate_graph` now walks `requires` in ROLE.md and SKILL.md (not just AGENT.md) and enforces stored SHA-256 integrity hashes; a `query_concept` SQL-injection guard; and both servers now report their version from `package.json`. Full detail in [harness/CHANGELOG.md](harness/CHANGELOG.md) and [ontology/CHANGELOG.md](ontology/CHANGELOG.md).
+**Also new in v0.5.0:**
+- **Agent Narrative Body:** The narrative content of `AGENT.md` is now rendered into the generated `AGENTS.md`, allowing agents to carry their own specific context independent of their roles.
+- **Introduction Slide Deck:** A comprehensive technical introduction is now available in `docs/introduction/`.
+- **Node Search Optimization:** `node_modules` are now explicitly ignored during node discovery.
+
+Full detail in [harness/CHANGELOG.md](harness/CHANGELOG.md) and [ontology/CHANGELOG.md](ontology/CHANGELOG.md).
 
 ---
 
@@ -176,7 +181,7 @@ authority:
 ---
 ```
 
-Authority composes down the chain: `never` unions (deny wins), `decides` intersects (autonomous only if every layer agrees), `escalates` unions. Anything unlisted defaults to escalate.
+Authority composes down the chain: `never` unions (deny wins), `decides` unions (autonomous if any layer grants it), `escalates` unions. Anything unlisted defaults to escalate.
 
 For the `models` hints (`tiny`, etc.), see [`executor.md`](skills/org-agent-architecture/references/executor.md).
 
@@ -287,10 +292,10 @@ Compiles an agent's full dependency chain into a runtime instruction file, valid
 
 ```bash
 # Claude Code
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.4.0:harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.5.0:harness
 
 # Any MCP-compatible host
-npx -y github:Chuck3PointZero/OAA#v0.4.0:harness --root /path/to/company
+npx -y github:Chuck3PointZero/OAA#v0.5.0:harness --root /path/to/company
 ```
 
 Distributed from this repo via tagged git refs, not the npm registry — see [harness/README.md](harness/README.md#versioning-and-rollback) for how version pinning and rollback work.
@@ -314,10 +319,10 @@ Distributed from this repo via tagged git refs, not the npm registry — neither
 
 ```bash
 # Claude Code (Node 22.5+ required for built-in SQLite)
-claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.4.0:ontology
+claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology
 
 # Any MCP-compatible host
-NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.4.0:ontology --root /path/to/company
+NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology --root /path/to/company
 ```
 
 | Tool | What it does |
@@ -338,11 +343,11 @@ See [ontology/README.md](ontology/README.md) for the full reference.
   "mcpServers": {
     "oaa-harness": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.4.0:harness", "--root", "/path/to/company"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.5.0:harness", "--root", "/path/to/company"]
     },
     "oaa-ontology": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.4.0:ontology", "--root", "/path/to/company"],
+      "args": ["-y", "github:Chuck3PointZero/OAA#v0.5.0:ontology", "--root", "/path/to/company"],
       "env": { "NODE_OPTIONS": "--experimental-sqlite" }
     }
   }

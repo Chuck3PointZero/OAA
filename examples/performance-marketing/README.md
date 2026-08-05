@@ -71,9 +71,9 @@ To add Google Ads support: add a `map google-ads { ... }` block to the ontology,
 npx skills add Chuck3PointZero/OAA --skill '*'
 
 # Step 2: Add the MCP servers
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.4.0:harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.5.0:harness
 claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite \
-  npx -y github:Chuck3PointZero/OAA#v0.4.0:ontology
+  npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology
 
 # Step 3: Compile the agent chain (from Claude Code with harness MCP connected)
 # Ask: compile_agent agents/ads-manager/AGENT.md

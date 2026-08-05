@@ -248,7 +248,7 @@ function authorAuthorityPrompt(args: Record<string, string>): {
 
 OAA authority composition algebra:
 - **never** — hard prohibitions. Unions across all layers. Deny wins everywhere.
-- **decides** — autonomous actions. Intersects across roles (autonomous only if ALL declaring roles permit it).
+- **decides** — autonomous actions. Unions across roles (autonomous if ANY declaring role permits it). An empty \`decides: []\` contributes nothing — it is a pure-watcher declaration, not a prohibition.
 - **escalates** — actions requiring human approval. Unions across layers.
 - **owns** — declares domain ownership for this role.
 - Default for unlisted actions: **escalate**.
@@ -318,14 +318,14 @@ compile_agent({ name: "${agentName}" })
 The compiler will:
 1. Locate ${agentName}/AGENT.md (or ${agentName}.agent.md)
 2. Follow \`requires\` edges to resolve ROLE(s) → SKILL(s) → TOOL(s)
-3. Compose authority: never=union, decides=intersection, escalates=union, never>escalates>decides
+3. Compose authority: never=union, decides=union, escalates=union, never>escalates>decides
 4. Write AGENTS.md in the agent directory (runtime instruction file — never hand-edit)
 5. Update agents.lock with SHA-256 hashes for integrity verification
 
 If compile_agent is not available, follow these manual steps:
 1. Read AGENT.md, then each required ROLE.md, then each required SKILL.md, then each required TOOL.md
 2. Collect all \`never\` entries (union) — these are absolute prohibitions
-3. Intersect all \`decides\` entries across roles — autonomous only if every role agrees
+3. Union all \`decides\` entries across roles — the agent holds the sum of its roles' grants; then drop any entry matched by a \`never\`
 4. Union all \`escalates\` entries — anything in any layer's escalates requires human approval
 5. Write AGENTS.md following the standard format (Identity → Roles → Skills → Tools → Authority → Required Environment)`,
   };
