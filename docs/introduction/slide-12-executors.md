@@ -41,7 +41,7 @@ These are not edge cases. Getting either wrong makes the agent unsafe or unrelia
 
 A remote model can disregard its system prompt. The `never` list in `AGENTS.md` is advisory to a remote LLM — it is not enforced by the runtime. **The tool gateway is the only hard boundary for remote agents.** If a `never` rule must hold, it must be enforced at the tool call level, not the prompt level. Treat the prompt as advisory and put the teeth in the tool layer.
 
-This is the design of v0.4.0: making the boundary explicit rather than pretending the system prompt is a hard limit when it isn't.
+This is the design of v0.5.0: making the boundary explicit rather than pretending the system prompt is a hard limit when it isn't.
 
 ### 2. Memory schema must be fully documented
 
@@ -52,6 +52,6 @@ The runner injects the role's `## Memory` section into the system prompt. If fie
 ## Speaker Notes
 
 - Emphasize: `compile_agent` output is identical for both executors. The executor field is read by the runner, not the compiler. This means the same compiled AGENTS.md can be tested locally first, then switched to remote with one field change.
-- The two non-negotiables are the whole point of the v0.4.0 release. OAA now documents these constraints explicitly rather than leaving them as implicit gotchas.
+- The two non-negotiables are the whole point of the v0.5.0 release. OAA now documents these constraints explicitly rather than leaving them as implicit gotchas.
 - `models: [tiny]` + `executor: remote` is the pattern for compact prompts on small-context or cost-optimized models. Compile fires Pass 2 (compact rewrite) before dispatch, so the remote model receives the stripped `AGENTS.md`, not the full narrative version.
 - For teams evaluating `executor: remote`: the gateway question should be the first evaluation criterion. If the tool infrastructure does not enforce `never` rules at the call level, `executor: remote` provides behavioral guidelines, not guarantees.

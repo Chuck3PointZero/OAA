@@ -63,4 +63,4 @@ Add to `.claude/settings.json` to make the OAA marketplace available to the whol
 - `--strict-mcp-config` scopes this run to only the tools AGENTS.md names, isolated from whatever else sits in the operator's global config.
 - `mcp-config.json` is NOT hand-authored — `compile_agent` writes it by merging the `server/mcp.json` of every tool the agent's chain requires.
 - Scheduling (cron, Windows Task Scheduler, GitHub Actions) is out of scope for OAA — any host that can run the command above on schedule satisfies the contract.
-- v0.4.0 breaking change: agents.lock keys are now resolved paths, not declared name fields. Delete old lockfile and re-run compile_agent.
+- v0.5.0 breaking change: agents.lock keys are now resolved paths, not declared name fields. Delete old lockfile and re-run compile_agent.

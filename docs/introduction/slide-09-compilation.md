@@ -86,7 +86,7 @@ The harness exposes all compile and run operations as MCP tools:
 ## Speaker Notes
 
 - Emphasize the sequence: write source nodes → `compile_agent` → `agents.lock` updated → commit. The lockfile is not optional boilerplate; it is what proves the graph was valid at the time it was compiled.
-- `agents.lock` was changed in v0.4.0 — lockfile keys are now resolved URI paths (`file://./agents/...`), not short names. Existing lockfiles need a one-time migration: `compile_agent` on each agent rewrites the keys automatically.
+- `agents.lock` was changed in v0.5.0 — lockfile keys are now resolved URI paths (`file://./agents/...`), not short names. Existing lockfiles need a one-time migration: `compile_agent` on each agent rewrites the keys automatically.
 - If a developer edits a ROLE.md and forgets to recompile, `validate_graph` catches the stale hash and fails. CI should gate on `validate_graph` passing.
 - `run_agent` reads `AGENTS.md` and passes it as the system prompt — so you can test a compiled agent immediately without leaving the MCP interface.
 - The compact rewrite flow (Pass 2) is separate from compilation: `compile_agent` writes `AGENTS.orig.md` and returns `compactNeeded: true`; the caller then calls `get_compact_prompt_template` and re-runs the rewriting step to produce the final slim `AGENTS.md`.

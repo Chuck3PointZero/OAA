@@ -307,7 +307,7 @@ Distributed from this repo via tagged git refs, not the npm registry — see [ha
 | `get_status(name)` | Returns last run state and escalation log from memory/ |
 | `get_ontology()` | Returns compiled ONTOLOGY.md if present |
 | `run_agent(name)` | Returns AGENTS.md content, ready to hand to an LLM — see "Running a Compiled Agent" below for the launch command |
-| `get_compact_prompt_template()` | Returns the Pass 2 compact-rewrite template (new in v0.4.0; embedded in the binary, so it works from any install path). Used when a `models: [tiny]` agent compiles with `compactNeeded` |
+| `get_compact_prompt_template()` | Returns the Pass 2 compact-rewrite template (new in v0.5.0; embedded in the binary, so it works from any install path). Used when a `models: [tiny]` agent compiles with `compactNeeded` |
 
 See [harness/README.md](harness/README.md) for the full reference.
 

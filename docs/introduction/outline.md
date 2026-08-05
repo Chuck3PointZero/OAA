@@ -105,5 +105,5 @@ The presentation moves through three acts:
 | NOUN / entity layer (Addendum A of proposal) | `docs/PROPOSALv2.md` |
 | Allow / Deny / Secret clearance model (Addendum B) | `docs/PROPOSALv2.md` |
 | Connector/capability split for multi-function MCP tools | `skills/org-agent-architecture/SKILL.md` |
-| v0.4.0 lockfile key format migration | `README.md` |
+| v0.5.0 lockfile key format migration | `README.md` |
 | Team distribution via `extraKnownMarketplaces` | `README.md` |
