@@ -43,18 +43,24 @@ npx skills update
 ## Per-Agent Install Guides
 
 <details>
-<summary><strong>Claude Code</strong></summary>
+<summary><strong>Claude Code</strong> (recommended: plugin install)</summary>
+
+One command adds the marketplace pinned to `stable`; a second installs the plugin, which bundles both skills and both MCP servers:
 
 ```bash
-# Install the skill
-claude skills add Chuck3PointZero/OAA
+/plugin marketplace add Chuck3PointZero/OAA@stable
+/plugin install oaa@oaa
+```
 
-# Optional: add the MCP servers (compile, validate, run, domain memory)
+The `@stable` suffix pins the marketplace to the currently-blessed release; `/plugin marketplace update` picks up new releases as they're cut. Once installed, mention OAA or ask to create an agent hierarchy and the skills activate automatically. `compile_agent`, `validate_graph`, and the full ontology/memory toolchain are all live from the first install.
+
+**Fallback — separate skill and MCP installs** (for older Claude Code without plugin support):
+
+```bash
+claude skills add Chuck3PointZero/OAA
 claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#stable:harness
 claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#stable:ontology
 ```
-
-Once installed, the skill is active in any Claude Code session. Mention OAA or ask to create an agent hierarchy and it activates automatically. The MCP servers are optional but unlock `compile_agent`, `validate_graph`, and the full ontology and memory toolchain.
 
 </details>
 
