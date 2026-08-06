@@ -1,7 +1,7 @@
 {
   "name": "oaa",
   "version": "0.5.0",
-  "description": "Structure multi-agent systems the way companies are structured — agents fill roles, roles require skills, skills require tools, bounded authority composes down the chain. Bundles two skills (org-agent-architecture, oaa-ontology-design) and two MCP servers (harness for compile/validate/run, ontology for domain memory).",
+  "description": "Organizational Agent Architecture (OAA). Structure multi-agent systems the way companies are structured — agents fill roles, roles require skills, skills require tools, bounded authority composes down the chain. Bundles two skills (org-agent-architecture, oaa-ontology-design) and two MCP servers (harness for compile/validate/run, ontology for domain memory).",
   "author": {
     "name": "Chuck 3.0",
     "email": "dr.kosta@yahoo.com"
@@ -9,7 +9,21 @@
   "homepage": "https://github.com/Chuck3PointZero/OAA",
   "repository": "https://github.com/Chuck3PointZero/OAA",
   "license": "MIT",
-  "keywords": ["agents", "multi-agent", "authority", "ontology", "mcp", "org-chart"],
+  "keywords": [
+    "organizational agent architecture",
+    "oaa",
+    "organizational agents",
+    "org agents",
+    "multi-agent",
+    "agent authority",
+    "role authority",
+    "authority composition",
+    "agent roles",
+    "agent skills",
+    "org chart",
+    "ontology",
+    "mcp"
+  ],
   "skills": ["./skills/"],
   "mcpServers": {
     "oaa-harness": {

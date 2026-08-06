@@ -11,8 +11,30 @@
     {
       "name": "oaa",
       "source": "./",
-      "description": "Structure multi-agent systems like a company: agents fill roles, roles require skills, skills require tools, bounded authority composes down the chain.",
-      "version": "0.5.0"
+      "description": "Organizational Agent Architecture (OAA) — structure multi-agent systems the way companies are structured. Agents fill roles, roles require skills, skills require tools, and bounded authority composes down the chain. Includes two skills and two MCP servers (harness + ontology).",
+      "version": "0.5.0",
+      "category": "agents",
+      "tags": [
+        "organizational-agents",
+        "multi-agent",
+        "agent-authority",
+        "org-chart",
+        "ontology"
+      ],
+      "keywords": [
+        "organizational agent architecture",
+        "oaa",
+        "organizational agents",
+        "org agents",
+        "multi-agent",
+        "agent authority",
+        "role authority",
+        "authority composition",
+        "agent roles",
+        "agent skills",
+        "org chart",
+        "ontology"
+      ]
     }
   ]
 }
