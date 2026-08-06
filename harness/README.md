@@ -10,14 +10,14 @@ MCP server for the [Organizational Agent Architecture](https://github.com/Chuck3
 
 ```bash
 # Claude Code
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.5.0:harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#master:harness
 
 # Claude Desktop / Cursor / Windsurf — add to your MCP config
 {
   "mcpServers": {
     "oaa-harness": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.5.0:harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#master:harness"]
     }
   }
 }
@@ -26,14 +26,14 @@ claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.5.0:harness
 Point the server at your OAA workspace by setting `OAA_ROOT` or passing `--root <path>`:
 
 ```bash
-OAA_ROOT=/path/to/company npx github:Chuck3PointZero/OAA#v0.5.0:harness
+OAA_ROOT=/path/to/company npx github:Chuck3PointZero/OAA#master:harness
 # or
-npx github:Chuck3PointZero/OAA#v0.5.0:harness --root /path/to/company
+npx github:Chuck3PointZero/OAA#master:harness --root /path/to/company
 ```
 
-The `#v0.5.0` pins to a tagged release rather than floating on the default branch — see **Versioning and rollback** below for why that matters and how to step down to an older release if one causes problems.
+`#master` tracks the default branch — you always get the latest release without editing your config. If you need a specific version (to reproduce a bug, or pin against an unexpected change), replace `#master` with a tagged release like `#v0.5.0` — see **Versioning and rollback** below.
 
-There's no published build artifact in git (`dist/` is gitignored) — installing from a git ref triggers the package's `prepare` script, which runs `npm run build` automatically before the server starts. The first `npx` invocation of a given version will be slower than later ones while it builds and npx caches the result.
+Installing from a git ref triggers the package's `prepare` script, which runs `npm run build` automatically before the server starts. The first `npx` invocation of a given ref is slower than later ones while it builds; `npx` then caches the built output.
 
 ---
 
@@ -67,7 +67,7 @@ A typical agent setup loads both MCP servers:
   "mcpServers": {
     "oaa-harness": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.5.0:harness", "--root", "/path/to/company"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#master:harness", "--root", "/path/to/company"]
     },
     "oaa-ontology": {
       "command": "node",
@@ -84,11 +84,9 @@ The harness handles the structural graph (what an agent is allowed to do). The o
 
 ## Versioning and Rollback
 
-Every release is tagged in git (`v0.2.0`, `v0.4.0`, `v0.5.0`, ...) with notes in `CHANGELOG.md` and a matching [GitHub Release](https://github.com/Chuck3PointZero/OAA/releases). Tags are what make rollback possible: an install pinned to `#v0.5.0` keeps working exactly as it does today even if `main` moves on or a later release has a bug.
+The default install refs use `#master` so users always get the latest release without editing their config. Every release is still tagged in git (`v0.2.0`, `v0.4.0`, `v0.5.0`, ...) with notes in `CHANGELOG.md` and a matching [GitHub Release](https://github.com/Chuck3PointZero/OAA/releases). If a release breaks something, or you need reproducibility across machines, **swap `#master` for a tag** in your MCP config — e.g. `#master:harness` → `#v0.5.0:harness` — and restart the MCP server. `npx` caches each distinct git ref separately, so switching back and forth doesn't require clearing anything.
 
-**To step down to an earlier release**, change the pinned ref in your MCP config (or `claude mcp add` command) from the current tag to the one you want, e.g. `#v0.5.0:harness` → `#v0.2.0:harness`, then restart the MCP server. `npx` caches each distinct git ref separately, so switching back and forth doesn't require clearing anything.
-
-**Avoid pinning to a branch** (`#main`) for anything other than local testing — a branch ref is mutable, so "rollback" wouldn't mean anything and a force-push upstream could change what you're running without your config changing at all. Tags are immutable by convention; don't reuse or move one after it's released.
+Tags are immutable by convention; a branch ref is mutable and moves as new commits land, so pinning to a tag is what makes rollback and reproducibility real. `#master` is the right default for most users; a tag is the right choice when you need to hold a specific version.
 
 Each tagged version corresponds to one `package.json` version bump and one `CHANGELOG.md` entry — if a release changes validator behavior (like 0.2.0's Tool Wiring generalization or 0.3.0's enforcement-gap acknowledgment), check the changelog before upgrading, since `validate_graph` findings on an existing workspace can change.
 

@@ -1,0 +1,32 @@
+{
+  "name": "oaa",
+  "version": "0.5.0",
+  "description": "Structure multi-agent systems the way companies are structured — agents fill roles, roles require skills, skills require tools, bounded authority composes down the chain. Bundles two skills (org-agent-architecture, oaa-ontology-design) and two MCP servers (harness for compile/validate/run, ontology for domain memory).",
+  "author": {
+    "name": "Chuck 3.0",
+    "email": "dr.kosta@yahoo.com"
+  },
+  "homepage": "https://github.com/Chuck3PointZero/OAA",
+  "repository": "https://github.com/Chuck3PointZero/OAA",
+  "license": "MIT",
+  "keywords": ["agents", "multi-agent", "authority", "ontology", "mcp", "org-chart"],
+  "skills": ["./skills/"],
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": {
+    "oaa-harness": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/harness/dist/index.js"],
+      "env": {
+        "NODE_PATH": "${CLAUDE_PLUGIN_DATA}/harness/node_modules"
+      }
+    },
+    "oaa-ontology": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/ontology/dist/index.js"],
+      "env": {
+        "NODE_OPTIONS": "--experimental-sqlite",
+        "NODE_PATH": "${CLAUDE_PLUGIN_DATA}/ontology/node_modules"
+      }
+    }
+  }
+}

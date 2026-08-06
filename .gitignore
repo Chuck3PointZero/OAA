@@ -9,6 +9,11 @@ dist/
 build/
 *.tsbuildinfo
 
+# Plugin distribution: MCP server dist/ MUST ship in the repo so plugin caches
+# (which don't run build steps) can launch the servers via ${CLAUDE_PLUGIN_ROOT}.
+!/harness/dist/
+!/ontology/dist/
+
 # SQLite
 *.sqlite
 *.sqlite-journal

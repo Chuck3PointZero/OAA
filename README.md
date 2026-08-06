@@ -50,8 +50,8 @@ npx skills update
 claude skills add Chuck3PointZero/OAA
 
 # Optional: add the MCP servers (compile, validate, run, domain memory)
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.5.0:harness
-claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#master:harness
+claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#master:ontology
 ```
 
 Once installed, the skill is active in any Claude Code session. Mention OAA or ask to create an agent hierarchy and it activates automatically. The MCP servers are optional but unlock `compile_agent`, `validate_graph`, and the full ontology and memory toolchain.
@@ -68,7 +68,7 @@ Add to your project's `.cursor/mcp.json`:
   "mcpServers": {
     "oaa": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.5.0:harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#master:harness"]
     }
   }
 }
@@ -113,7 +113,7 @@ Add the OAA harness to your `claude_desktop_config.json`:
   "mcpServers": {
     "oaa": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.5.0:harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#master:harness"]
     }
   }
 }
@@ -292,13 +292,13 @@ Compiles an agent's full dependency chain into a runtime instruction file, valid
 
 ```bash
 # Claude Code
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.5.0:harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#master:harness
 
 # Any MCP-compatible host
-npx -y github:Chuck3PointZero/OAA#v0.5.0:harness --root /path/to/company
+npx -y github:Chuck3PointZero/OAA#master:harness --root /path/to/company
 ```
 
-Distributed from this repo via tagged git refs, not the npm registry — see [harness/README.md](harness/README.md#versioning-and-rollback) for how version pinning and rollback work.
+Distributed directly from this repo, not the npm registry. Default refs use `#master` for always-latest; swap in a tag (e.g. `#v0.5.0`) to pin — see [harness/README.md](harness/README.md#versioning-and-rollback).
 
 | Tool | What it does |
 |------|-------------|
@@ -319,10 +319,10 @@ Distributed from this repo via tagged git refs, not the npm registry — neither
 
 ```bash
 # Claude Code (Node 22.5+ required for built-in SQLite)
-claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology
+claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#master:ontology
 
 # Any MCP-compatible host
-NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology --root /path/to/company
+NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#master:ontology --root /path/to/company
 ```
 
 | Tool | What it does |
@@ -343,11 +343,11 @@ See [ontology/README.md](ontology/README.md) for the full reference.
   "mcpServers": {
     "oaa-harness": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.5.0:harness", "--root", "/path/to/company"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#master:harness", "--root", "/path/to/company"]
     },
     "oaa-ontology": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#v0.5.0:ontology", "--root", "/path/to/company"],
+      "args": ["-y", "github:Chuck3PointZero/OAA#master:ontology", "--root", "/path/to/company"],
       "env": { "NODE_OPTIONS": "--experimental-sqlite" }
     }
   }

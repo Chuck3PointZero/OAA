@@ -90,10 +90,10 @@ The server exposes three tools, callable by any MCP-compatible agent:
 
 ```bash
 # Claude Code
-claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology
+claude mcp add oaa-ontology -- env NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#master:ontology
 
 # Any MCP-compatible host
-NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology --root /path/to/company
+NODE_OPTIONS=--experimental-sqlite npx -y github:Chuck3PointZero/OAA#master:ontology --root /path/to/company
 ```
 
 The `--root` argument (or `OAA_ROOT` environment variable) must point to the directory that contains your `ontology/` folder.

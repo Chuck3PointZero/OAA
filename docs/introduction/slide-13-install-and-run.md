@@ -19,10 +19,10 @@ Once installed, mention OAA or ask to create an agent hierarchy — the skill ac
 ## Step 2: Add the MCP Servers (optional, unlocks compile + validate)
 
 ```bash
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#v0.5.0:harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#master:harness
 claude mcp add oaa-ontology \
   -- env NODE_OPTIONS=--experimental-sqlite \
-  npx -y github:Chuck3PointZero/OAA#v0.5.0:ontology
+  npx -y github:Chuck3PointZero/OAA#master:ontology
 ```
 
 ## Step 3: Compile and Run

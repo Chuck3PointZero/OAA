@@ -1,0 +1,2 @@
+// OAA Ontology types
+export {};

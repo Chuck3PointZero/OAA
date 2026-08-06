@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "diff -q \"${CLAUDE_PLUGIN_ROOT}/harness/package.json\" \"${CLAUDE_PLUGIN_DATA}/harness/package.json\" >/dev/null 2>&1 || (mkdir -p \"${CLAUDE_PLUGIN_DATA}/harness\" && cp \"${CLAUDE_PLUGIN_ROOT}/harness/package.json\" \"${CLAUDE_PLUGIN_DATA}/harness/\" && cd \"${CLAUDE_PLUGIN_DATA}/harness\" && npm install --omit=dev --silent) || rm -f \"${CLAUDE_PLUGIN_DATA}/harness/package.json\""
+          },
+          {
+            "type": "command",
+            "command": "diff -q \"${CLAUDE_PLUGIN_ROOT}/ontology/package.json\" \"${CLAUDE_PLUGIN_DATA}/ontology/package.json\" >/dev/null 2>&1 || (mkdir -p \"${CLAUDE_PLUGIN_DATA}/ontology\" && cp \"${CLAUDE_PLUGIN_ROOT}/ontology/package.json\" \"${CLAUDE_PLUGIN_DATA}/ontology/\" && cd \"${CLAUDE_PLUGIN_DATA}/ontology\" && npm install --omit=dev --silent) || rm -f \"${CLAUDE_PLUGIN_DATA}/ontology/package.json\""
+          }
+        ]
+      }
+    ]
+  }
+}
