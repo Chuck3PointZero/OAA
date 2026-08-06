@@ -10,14 +10,14 @@ MCP server for the [Organizational Agent Architecture](https://github.com/Chuck3
 
 ```bash
 # Claude Code
-claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#master:harness
+claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#stable:harness
 
 # Claude Desktop / Cursor / Windsurf — add to your MCP config
 {
   "mcpServers": {
     "oaa-harness": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#master:harness"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#stable:harness"]
     }
   }
 }
@@ -26,14 +26,14 @@ claude mcp add oaa-harness -- npx -y github:Chuck3PointZero/OAA#master:harness
 Point the server at your OAA workspace by setting `OAA_ROOT` or passing `--root <path>`:
 
 ```bash
-OAA_ROOT=/path/to/company npx github:Chuck3PointZero/OAA#master:harness
+OAA_ROOT=/path/to/company npx github:Chuck3PointZero/OAA#stable:harness
 # or
-npx github:Chuck3PointZero/OAA#master:harness --root /path/to/company
+npx github:Chuck3PointZero/OAA#stable:harness --root /path/to/company
 ```
 
-`#master` tracks the default branch — you always get the latest release without editing your config. If you need a specific version (to reproduce a bug, or pin against an unexpected change), replace `#master` with a tagged release like `#v0.5.0` — see **Versioning and rollback** below.
+`#stable` is a moving tag pointing at the latest release that has been deliberately blessed for use. You always get the current stable release without editing your config; you never get half-finished work sitting on `master`. If you need to hold a specific version (to reproduce a bug, or pin against an upgrade), replace `#stable` with a numbered tag like `#v0.5.0` — see **Versioning and rollback** below.
 
-Installing from a git ref triggers the package's `prepare` script, which runs `npm run build` automatically before the server starts. The first `npx` invocation of a given ref is slower than later ones while it builds; `npx` then caches the built output.
+Installing from a git ref triggers the package's `prepare` script, which runs `npm run build` automatically before the server starts. The first `npx` invocation of a given ref is slower than later ones while it builds; `npx` then caches the built output — so a `stable` move only reaches users on their next `npx` cache miss for that ref.
 
 ---
 
@@ -67,7 +67,7 @@ A typical agent setup loads both MCP servers:
   "mcpServers": {
     "oaa-harness": {
       "command": "npx",
-      "args": ["-y", "github:Chuck3PointZero/OAA#master:harness", "--root", "/path/to/company"]
+      "args": ["-y", "github:Chuck3PointZero/OAA#stable:harness", "--root", "/path/to/company"]
     },
     "oaa-ontology": {
       "command": "node",
@@ -84,11 +84,17 @@ The harness handles the structural graph (what an agent is allowed to do). The o
 
 ## Versioning and Rollback
 
-The default install refs use `#master` so users always get the latest release without editing their config. Every release is still tagged in git (`v0.2.0`, `v0.4.0`, `v0.5.0`, ...) with notes in `CHANGELOG.md` and a matching [GitHub Release](https://github.com/Chuck3PointZero/OAA/releases). If a release breaks something, or you need reproducibility across machines, **swap `#master` for a tag** in your MCP config — e.g. `#master:harness` → `#v0.5.0:harness` — and restart the MCP server. `npx` caches each distinct git ref separately, so switching back and forth doesn't require clearing anything.
+Three kinds of ref, each with a specific job:
 
-Tags are immutable by convention; a branch ref is mutable and moves as new commits land, so pinning to a tag is what makes rollback and reproducibility real. `#master` is the right default for most users; a tag is the right choice when you need to hold a specific version.
+- **`#stable`** — moving tag pointing at the currently-blessed release. Default install refs use this; users get the latest release without editing their config. Landing a commit on `master` does not move `stable`; only an explicit `git tag -f stable <version> && git push -f origin stable` does. If a release turns out to be broken, moving `stable` back to a prior tag rolls every user forward on their next `npx` cache miss.
+- **`#vX.Y.Z`** — numbered release tags (`v0.2.0`, `v0.4.0`, `v0.5.0`, ...), immutable by convention. Each corresponds to one `package.json` version bump and one `CHANGELOG.md` entry. Pin to one of these when you need reproducibility across machines or to hold a version you've validated.
+- **`#master`** — the default branch. Every commit lands here, including work in progress. Not intended as an install ref.
 
-Each tagged version corresponds to one `package.json` version bump and one `CHANGELOG.md` entry — if a release changes validator behavior (like 0.2.0's Tool Wiring generalization or 0.3.0's enforcement-gap acknowledgment), check the changelog before upgrading, since `validate_graph` findings on an existing workspace can change.
+If a release breaks something, **swap `#stable` for a numbered tag** in your MCP config — e.g. `#stable:harness` → `#v0.5.0:harness` — and restart the MCP server. `npx` caches each distinct git ref separately, so switching back and forth doesn't require clearing anything.
+
+If a release changes validator behavior (like 0.2.0's Tool Wiring generalization, 0.3.0's enforcement-gap acknowledgment, or 0.5.0's `decides` union), check `CHANGELOG.md` before upgrading — `validate_graph` findings on an existing workspace can change.
+
+**Maintainer note.** Each blessed release moves `stable` with `git tag -f stable vX.Y.Z && git push -f origin stable`. The `-f` is intentional for `stable` only; numbered tags are immutable once pushed.
 
 **Upgrading to 0.5.0 — breaking change:** Authority composition for `decides` (autonomous actions) has changed from **intersection** to **union**. An agent filling multiple roles now holds the combined autonomous authority of all its roles. Prohibitions (`never`) still union and still override all grants. Also, `node_modules` are now explicitly ignored during node discovery.
 
