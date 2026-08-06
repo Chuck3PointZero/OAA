@@ -1,5 +1,5 @@
 {
-  "name": "oaa",
+  "name": "organizational-agents",
   "version": "0.5.0",
   "description": "Organizational Agent Architecture (OAA). Structure multi-agent systems the way companies are structured — agents fill roles, roles require skills, skills require tools, bounded authority composes down the chain. Bundles two skills (org-agent-architecture, oaa-ontology-design) and two MCP servers (harness for compile/validate/run, ontology for domain memory).",
   "author": {

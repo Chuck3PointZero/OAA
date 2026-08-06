@@ -49,7 +49,7 @@ One command adds the marketplace pinned to `stable`; a second installs the plugi
 
 ```bash
 /plugin marketplace add Chuck3PointZero/OAA@stable
-/plugin install oaa@oaa
+/plugin install organizational-agents@oaa
 ```
 
 The `@stable` suffix pins the marketplace to the currently-blessed release; `/plugin marketplace update` picks up new releases as they're cut. Once installed, mention OAA or ask to create an agent hierarchy and the skills activate automatically. `compile_agent`, `validate_graph`, and the full ontology/memory toolchain are all live from the first install.
