@@ -140,6 +140,10 @@ Add the harness to Windsurf's MCP settings under Cascade → MCP Servers.
 
 ---
 
+## Upgrading to v0.6.0
+
+**New — `references/runner.md`.** A dedicated reference doc for how to run a compiled agent and how to run a whole company. Covers the canonical single-agent invocation, the three trigger types (schedule / event / on-demand), how work flows between roles through the tools they share, a minimal cron-driver pseudocode pattern, and the failure modes a naive scheduler misses. `SKILL.md` now surfaces both `runner.md` and `executor.md` in its Files table. No code changes — harness and ontology behavior are byte-identical to 0.5.0; the version bump keeps a single release tag reaching both servers.
+
 ## Upgrading to v0.5.0
 
 **Breaking change — `decides` union.** Authority composition for `decides` (autonomous actions) has changed from **intersection** (intersection of all roles) to **union** (the sum of all roles). An agent filling multiple roles now holds the combined autonomous authority of all its roles. Prohibitions (`never`) still union and still override all grants.

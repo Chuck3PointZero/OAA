@@ -2,6 +2,15 @@
 
 All notable changes to `@oaa/harness` are documented here.
 
+## 0.6.0 — 2026-08-26
+
+### Added
+
+- **`references/runner.md` — how to run a compiled agent, and how to run a whole company.** OAA's earlier docs covered what `compile_agent` produces (`AGENTS.md` + `mcp-config.json`), but not what actually runs the payload. `runner.md` fills that gap: the canonical single-agent PowerShell invocation with its flag semantics; the three trigger types (schedule, event, on-demand) with schedule framed as the agent's normal work rhythm; how work flows between roles through the tools they share access to (agents don't call each other — a tool's own storage is the pickup point); a minimal pseudocode cron-driver pattern plus the failure modes a naive driver misses (schedule drift, stale compiled agent, global vs per-agent lock, silent failure, no same-day retry); and an explicit list of what is out of scope for OAA (scheduling infrastructure, escalation sinks, the tool gateway for `executor: remote`).
+- **`SKILL.md` now references both `runner.md` and `executor.md`** in the "Files in This Skill" table. Previously `executor.md` shipped without being surfaced there either — fixed alongside the new runner entry.
+
+No code changes in this release; the harness compiler, validator, and MCP server behavior are byte-identical to 0.5.0.
+
 ## 0.5.0 — 2026-08-05
 
 ### ⚠ Behavior change — multi-role agents gain autonomous authority

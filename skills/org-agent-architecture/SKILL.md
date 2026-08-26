@@ -235,6 +235,8 @@ Ontology store: `memory/ontology.db` (SQLite, managed by @oaa/ontology)
 |---|---|
 | `references/authority-model.md` | Composing, auditing, or explaining any authority block |
 | `references/validation.md` | Declaring a structure valid; reviewing a change |
+| `references/executor.md` | Setting `executor` or `models` on an agent; understanding local vs remote dispatch |
+| `references/runner.md` | Running a compiled agent or a whole company — triggers, tools as pickup points, scheduler patterns |
 | `references/example-meta-ads.md` | The user wants an example, or you're unsure how a pattern looks in practice |
 | `assets/templates/` | Creating any node — always copy, never write frontmatter from memory |
 
