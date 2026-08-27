@@ -39,6 +39,14 @@ One constraint, one layer. The composition rules propagate it; duplication creat
 | Failure handling intrinsic to a procedure | skill | `escalates` |
 | Anything | agent | *(declare nothing)* |
 
+A tool `never` must reference something the tool itself can observe in the call it
+intercepts — a spend amount, a recipient address, a campaign status. A constraint
+naming organizational process state no tool call can see ("without PM approval",
+"without manager review") is not a tool-layer ceiling; the tool has no visibility
+into whether that approval happened, so it cannot enforce it. That is a role-layer
+accountability boundary instead — the role's `never`, or an `escalates` naming the
+approval step. Move it up one layer.
+
 ## Worked Composition
 
 Path: `ads-manager → budget-steward → budget-pacing → meta-ads-update-budget`
@@ -63,11 +71,33 @@ escalates:
 
 ## Auditing an Existing Block
 
+This is the canonical audit sequence — `references/validation.md` §3 points here
+rather than restating it. If you are changing this list, this is the only file
+that needs to change.
+
 When reviewing, check in this order:
 
 1. Any identifier appearing in two roles' `owns` → **error** (ownership conflict).
-2. Any `decides` entry that semantically overlaps a `never` anywhere downstream → **error** (dead grant; the `never` wins, so the grant misleads).
-3. The same constraint stated at two layers → **warning** (drift risk; keep the owning layer's copy).
+2. Any `decides` entry that semantically overlaps a `never` anywhere downstream →
+   **error** (dead grant; the `never` wins, so the grant misleads).
+3. The exact same constraint, same spelling, stated at two layers → **warning**
+   (drift risk; keep the owning layer's copy). Not to be confused with item 7
+   below — this is verbose, not broken.
 4. Authority fields on an agent → **warning** (almost always belongs on a role).
-5. Prose in any body describing permissions absent from every frontmatter field → **gap** (prose does not compose; lift it into the block or strike it).
-6. Identifier spelling variants ("campaign-budget" vs "campaign-budgets") → **warning** (breaks lexical conflict checking).
+5. Prose in any body describing permissions absent from every frontmatter field →
+   **gap** (prose does not compose; lift it into the block or strike it).
+6. A tool `never` naming organizational process state no tool call can observe
+   ("without PM approval", "without manager review") rather than something the
+   tool's own inputs/outputs can see → **error** (undeliverable ceiling; move it
+   to the role layer — see Placement Discipline above).
+7. Identifier spelling variants on `never` / `escalates` / `decides` specifically
+   ("campaign-budget" vs "campaign-budgets") → **error**, not warning, when the
+   variants appear across two layers of the same active chain. Because these
+   fields compose by union, both spellings stay independently active — this is
+   not clutter, it is a silent authority split: an editor who narrows or removes
+   the constraint under one spelling reasonably believes it is gone, while the
+   chain still enforces the other, unreviewed and undiffed. Treat it with the
+   same severity as widened authority elsewhere in this convention, because that
+   is its practical effect. (Spelling variants on `owns` are covered by item 1 —
+   two spellings of the same domain in different roles' `owns` is exactly the
+   ownership-conflict pattern that item checks for.)

@@ -24,7 +24,13 @@ authority:
 {{Operating prose — only write this if an authority identifier needs a definition
 ("stable volume means ≥ 3 consecutive hours"), or good performance has a shape
 a maintainer couldn't derive from the frontmatter. Never restate owns/decides/
-escalates/never in prose. If the frontmatter is self-explanatory, one line or nothing.}}
+escalates/never in prose. If the frontmatter is self-explanatory, one line or nothing.
+
+A ROLE.md with no body beyond frontmatter and this one-line mission is fully
+valid. Section headings you might add below — Memory, Decisions Log, or
+anything else — are examples of what operating prose CAN contain, not a
+required-sections checklist. Add a section only because this specific role
+needs it, never because a template or another role's ROLE.md has one.}}
 
 ## Memory
 

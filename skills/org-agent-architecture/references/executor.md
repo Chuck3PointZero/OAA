@@ -40,6 +40,15 @@ metadata:
 
 **Authority enforcement:** for `executor: remote`, the compiled `AGENTS.md` is the system prompt but the remote endpoint is not bound by it. The gateway enforcing the composed `never` list at the tool-call level is the only hard boundary. See [authority-model.md](authority-model.md).
 
+**Before wiring `metadata.remote`, verify the target system's actual request contract — not
+the pattern's implied one.** `executor: remote` assumes the endpoint receives the compiled
+`AGENTS.md` as a system prompt. Confirm the specific entry point being pointed at actually
+has a field for this (read the target's own request type/schema) before building the
+integration around that assumption. A system can have a system-prompt override *somewhere*
+in its code while the specific integration surface you're using doesn't expose it — those are
+different facts, and only the second one determines whether this AGENT.md's authority is
+actually delivered to the remote system or silently discarded.
+
 **Memory schema:** the ROLE.md `## Memory` section must be fully populated for any remote agent — the runner injects it into the system prompt, and without documented field names the remote model invents them.
 
 ---

@@ -21,6 +21,13 @@ authority:
 captured in the frontmatter (type, env, provenance, never). If the tool is
 straightforward, write only what would surprise a maintainer.}}
 
+## Data Models
+
+{{Optional. Only add this section if a skill or role elsewhere in the graph
+defers a schema to this tool ("schema owned by {{tool-name}}"). Document the
+field names and types a maintainer would need — this is what that deferral
+resolves to. Omit entirely if nothing defers to this tool.}}
+
 ## Declared Functions
 
 | Function | Description |
