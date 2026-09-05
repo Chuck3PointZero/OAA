@@ -2,6 +2,12 @@
 
 All notable changes to `@oaa/ontology` are documented here.
 
+## 0.7.0 — 2026-09-05
+
+### Changed
+
+- **Version bump for alignment with `@oaa/harness` v0.7.0.** No functional changes in this release; version kept in lockstep with the harness so a single release tag reaches both servers.
+
 ## 0.6.0 — 2026-08-26
 
 ### Changed

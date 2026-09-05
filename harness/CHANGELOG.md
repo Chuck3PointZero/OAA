@@ -2,6 +2,21 @@
 
 All notable changes to `@oaa/harness` are documented here.
 
+## 0.7.0 — 2026-09-05
+
+### Breaking
+
+- **Tool frontmatter field `type` renamed to `connector`.** Values unchanged (`mcp | api | local`). This frees `type` for OKF conformance across all node kinds. Existing TOOL.md files must change `type:` → `connector:` in their frontmatter.
+
+### Added
+
+- **OKF (Open Knowledge Format) conformance.** Every OAA node is now a conformant OKF v0.2 concept document. The `type:` frontmatter field uses Kubernetes-style namespacing: `oaa/Agent`, `oaa/Role`, `oaa/Skill`, `oaa/Tool`, `oaa/Noun`. All templates, all example files, and the reference example updated.
+
+### Changed
+
+- **SKILL.md hardening (OAA-REPAIRS + SKILL-UPGRADE-PLAN).** Triggers block added to frontmatter (44 natural-language phrases); core model rewritten with MUST/MUST NOT imperatives; 12 common-mistake bullets rewritten as MUST NOT rules; four named scenario workflows added (new system, add agent, authority audit, decompose bloated role); validation checklist added for session-end audit.
+- **Validation, authority model, and templates hardened (OAA-REPAIRS).** validation.md: preamble, compiler-output-duplication warning, graph-traversal algorithm, dead allowed-tools/undeclared-function/schema-in-prose/dangling-deferral checks, enforcement-gap bar tightened. authority-model.md: unenforceable-tool-never paragraph, spelling-drift elevated to error. INSTRUCTIONS.md added as binding rulebook. Templates: optionality language strengthened, TOOL Data Models section added.
+
 ## 0.6.0 — 2026-08-26
 
 ### Added
