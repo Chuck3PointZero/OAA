@@ -1,8 +1,9 @@
 ---
+type: oaa/Tool
 kind: tool
 name: meta-ads
 description: Wraps the Meta Marketing API for campaign and budget operations; enforces spend ceilings and activation rules regardless of caller.
-type: mcp
+connector: mcp
 env: META_ACCESS_TOKEN
 concept-map: meta-ads    # references the map tool name in ontology/customer-acquisition.rel
 provenance:

@@ -214,7 +214,7 @@ ${
     skill:
       "Add `requires: [tools/<tool-name>]` or `allowed-tools: [tool-name]` to point at the tools this skill needs.",
     tool:
-      "No requires needed. The tool is the leaf node. Add `type: api|mcp|local`, `env: ENV_VAR_NAME` if applicable.",
+      "No requires needed. The tool is the leaf node. Add `connector: api|mcp|local`, `env: ENV_VAR_NAME` if applicable.",
   };
 
   return {

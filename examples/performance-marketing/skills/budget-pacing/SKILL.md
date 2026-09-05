@@ -1,4 +1,5 @@
 ---
+type: oaa/Skill
 kind: skill
 name: budget-pacing
 description: Adjusts daily campaign budgets to maintain on-pace spend; increases or decreases within the bounds declared on the calling role.

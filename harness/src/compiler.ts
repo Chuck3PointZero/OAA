@@ -353,8 +353,8 @@ export function renderAgentsMd(
       lines.push(`### ${tool.name}`);
       lines.push("");
       lines.push(tool.frontmatter.description);
-      if (tool.frontmatter.type) {
-        lines.push(`**Type:** ${tool.frontmatter.type}  `);
+      if (tool.frontmatter.connector) {
+        lines.push(`**Connector:** ${tool.frontmatter.connector}  `);
       }
       if (tool.frontmatter.env) {
         lines.push(`**Env:** \`${tool.frontmatter.env}\`  `);
@@ -426,7 +426,7 @@ export function buildMcpConfig(
   const missing: string[] = [];
 
   for (const tool of chain.tools) {
-    if (tool.frontmatter.type !== "mcp") continue;
+    if (tool.frontmatter.connector !== "mcp") continue;
 
     const toolDir = statSync(tool.path).isFile()
       ? dirname(tool.path)
@@ -689,14 +689,14 @@ export function validateGraph(rootDir: string): ValidationResult {
       const scriptsDir = join(toolDir, "scripts");
       const never = tool.frontmatter.authority?.never ?? [];
       const vendoredRel = tool.frontmatter.provenance?.vendored;
-      const toolType = tool.frontmatter.type;
+      const toolType = tool.frontmatter.connector;
 
       if (toolType === "mcp" && !existsSync(mcpConfigPath)) {
         findings.push({
           severity: "error",
           check: "Tool Wiring",
           file: tool.path,
-          message: `Tool "${tool.name}" is type: mcp but has no server/mcp.json — it cannot be launched`,
+          message: `Tool "${tool.name}" is connector: mcp but has no server/mcp.json — it cannot be launched`,
           fix: `Add ${join("server", "mcp.json")} under ${relative(rootDir, toolDir)} (transport config naming env vars only, no secrets). See OAA/skills/org-agent-architecture/references/example-meta-ads.md`,
         });
       }

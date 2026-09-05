@@ -43,9 +43,10 @@ tools/meta-ads/
 ```
 
 ```yaml
+type: oaa/Tool
 kind: tool
 name: meta-ads
-type: mcp
+connector: mcp
 env: META_ACCESS_TOKEN
 provenance:
   source: github.com/pipeboard-co/meta-ads-mcp

@@ -30,7 +30,7 @@ authority:
 | **agent** | A runner — schedule, model, memory, the executor | `fills` (alias for `requires`), `memory/` folder, `metadata.schedule` |
 | **role** | An accountability — a domain someone owns | `owns`, `watches`, `decisions/` folder |
 | **skill** | A procedure — steps, workflow, how-to | `allowed-tools` (alias for `requires`), `scripts/`, `assets/` |
-| **tool** | A single callable capability | `type: api\|mcp\|local`, `env:`, `server/` folder |
+| **tool** | A single callable capability | `connector: api\|mcp\|local`, `env:`, `server/` folder |
 
 ## Speaker Notes
 

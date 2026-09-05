@@ -1,10 +1,11 @@
 ---
+type: oaa/Tool
 kind: tool
 name: {{tool-name}}                  # the connector for a multi-capability server
 description: Connector to {{service}} via {{transport}}. Capabilities are the sibling
   sub-tool files; skills require those, never this connector directly.
-type: {{api | mcp | local}}
-provenance:                          # REQUIRED for type: api and type: mcp
+connector: {{api | mcp | local}}
+provenance:                          # REQUIRED for connector: api and connector: mcp
   source: {{upstream-url-or-internal}}
   status: {{first-party | third-party}}   # third-party = anything we don't author
   vendored: server/vendor/{{package}}     # where the code lives below this node

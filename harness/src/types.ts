@@ -16,10 +16,10 @@ export interface Provenance {
   vendored?: string;        // Path to where the REAL implementation lives,
                             // relative to the tool dir (or a file://... path
                             // into a sibling repo). Works for every tool
-                            // type: a vendored third-party SDK copy for
-                            // type: mcp, or a pointer to first-party backing
+                            // connector: a vendored third-party SDK copy for
+                            // connector: mcp, or a pointer to first-party backing
                             // code (e.g. the API endpoint files that actually
-                            // enforce a never rule) for type: api / local.
+                            // enforce a never rule) for connector: api / local.
   "pinned-in"?: string;     // e.g. "agents.lock"
   "enforcement-gap"?: EnforcementGap; // Acknowledged, justified absence of an
                             // enforcement anchor for this tool's
@@ -48,7 +48,7 @@ export interface NodeFrontmatter {
   "allowed-tools"?: string[]; // skill alias for requires (agentskills.io compat)
   authority?: Authority;
   metadata?: Record<string, unknown>;
-  type?: "api" | "mcp" | "local";
+  connector?: "api" | "mcp" | "local";
   env?: string;
   auth?: string;
   layer?: string;

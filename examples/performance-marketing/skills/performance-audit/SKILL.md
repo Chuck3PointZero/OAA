@@ -1,4 +1,5 @@
 ---
+type: oaa/Skill
 kind: skill
 name: performance-audit
 description: Pulls rolling 3-day campaign performance from Meta Ads and computes CPA, CTR delta, and frequency; surfaces campaigns that are below the CPA floor or above the frequency ceiling.

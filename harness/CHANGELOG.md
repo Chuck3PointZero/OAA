@@ -86,7 +86,7 @@ This is a behavior change for any graph that was relying on the old (incorrect) 
 
 ### Changed
 
-- **Tool Wiring validation now applies to every tool `type` (`mcp`, `api`, `local`), not just `mcp`.** A tool of any type that declares `authority.never` rules now requires a real enforcement anchor — `server/proxy/` (mcp), a non-empty `scripts/` dir, or a resolvable `provenance.vendored` pointer — or `validate_graph` reports it as an error ("rule is decorative"). Previously only `type: mcp` tools were checked, so `api`/`local` tools with `never` rules and no enforcement passed validation silently.
-- The `server/mcp.json` existence check still applies only to `type: mcp` tools (api/local tools aren't launched as MCP servers, so they have no `server/mcp.json` to check).
+- **Tool Wiring validation now applies to every tool `connector` (`mcp`, `api`, `local`), not just `mcp`.** A tool of any connector type that declares `authority.never` rules now requires a real enforcement anchor — `server/proxy/` (mcp), a non-empty `scripts/` dir, or a resolvable `provenance.vendored` pointer — or `validate_graph` reports it as an error ("rule is decorative"). Previously only `connector: mcp` tools were checked, so `api`/`local` tools with `never` rules and no enforcement passed validation silently.
+- The `server/mcp.json` existence check still applies only to `connector: mcp` tools (api/local tools aren't launched as MCP servers, so they have no `server/mcp.json` to check).
 
 This means workspaces with `api`/`local` tools that declare `never` rules but no enforcement code will now see new validation errors that didn't appear before. This is intentional — the rule was already unenforced, this just makes that visible.

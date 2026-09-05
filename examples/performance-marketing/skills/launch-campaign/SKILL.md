@@ -1,4 +1,5 @@
 ---
+type: oaa/Skill
 kind: skill
 name: launch-campaign
 description: Creates and activates a new campaign on Meta Ads from an approved brief; maps business-domain fields to API vocabulary using the ontology tool map.

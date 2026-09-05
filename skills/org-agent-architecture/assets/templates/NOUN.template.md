@@ -1,4 +1,5 @@
 ---
+type: oaa/Noun
 kind: noun
 name: {{noun-name}}                  # the canonical identifier used in authority blocks
 description: {{One sentence: what this thing is.}}

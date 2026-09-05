@@ -1,4 +1,5 @@
 ---
+type: oaa/Skill
 kind: skill
 name: account-monitoring
 description: Checks Meta ad account health — policy status, billing flags, API error rates, and unusual spend patterns outside normal campaign bounds.

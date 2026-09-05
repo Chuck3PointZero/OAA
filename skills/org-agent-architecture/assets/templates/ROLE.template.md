@@ -1,4 +1,5 @@
 ---
+type: oaa/Role
 kind: role
 name: {{role-name}}                  # lowercase-hyphenated; must match directory name
 description: {{One sentence: the accountability this role carries.}}

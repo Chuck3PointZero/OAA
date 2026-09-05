@@ -1,4 +1,5 @@
 ---
+type: oaa/Agent
 kind: agent
 name: {{agent-name}}
 description: {{One sentence: what this runner does.}}

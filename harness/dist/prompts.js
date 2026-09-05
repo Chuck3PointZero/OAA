@@ -176,7 +176,7 @@ ${kind === "role" || kind === "agent"
         agent: "Add `requires: [roles/<role-name>]` to point at the roles this agent fills.",
         role: "Add `requires: [skills/<skill-name>]` to point at the skills this role uses.",
         skill: "Add `requires: [tools/<tool-name>]` or `allowed-tools: [tool-name]` to point at the tools this skill needs.",
-        tool: "No requires needed. The tool is the leaf node. Add `type: api|mcp|local`, `env: ENV_VAR_NAME` if applicable.",
+        tool: "No requires needed. The tool is the leaf node. Add `connector: api|mcp|local`, `env: ENV_VAR_NAME` if applicable.",
     };
     return {
         role: "user",

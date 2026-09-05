@@ -1,4 +1,5 @@
 ---
+type: oaa/Agent
 kind: agent
 name: ads-manager
 description: Manages paid acquisition campaigns on Meta Ads — budget pacing, creative health, and account monitoring.

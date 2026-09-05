@@ -1,4 +1,5 @@
 ---
+type: oaa/Role
 kind: role
 name: creative-manager
 description: Owns the ad creative lifecycle — monitors creative fatigue, rotates underperforming ads, and launches approved creatives within declared authority.

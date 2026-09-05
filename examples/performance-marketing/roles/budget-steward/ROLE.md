@@ -1,4 +1,5 @@
 ---
+type: oaa/Role
 kind: role
 name: budget-steward
 description: Owns campaign budget allocation and pacing — adjusts daily spend within bounds and escalates anything that requires human approval.

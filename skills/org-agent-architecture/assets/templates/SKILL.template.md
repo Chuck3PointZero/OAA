@@ -1,4 +1,5 @@
 ---
+type: oaa/Skill
 kind: skill
 name: {{skill-name}}
 description: {{One sentence: the procedure. Written for catalog-level discovery (~100 tokens).}}

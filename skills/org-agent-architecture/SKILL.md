@@ -206,7 +206,7 @@ Compilation resolves an agent's full dependency chain into a single `AGENTS.md` 
 
    Content sections (in order): agent identity; hard limits (all `never` rules from every tool, inlined verbatim); memory schema; run order (shared skills first, then each role with its `decides` / `escalates` / workflow pointer); escalation dispatch instructions; env var table (names only, never values); what the agent does not own (role `never` fields).
 
-6. **Write `mcp-config.json`** next to `AGENTS.md` — merge the `server/mcp.json` of every required tool with `type: mcp` into one file, keyed by tool name. A tool of that type missing its `server/mcp.json` is reported as a compile-time warning, not silently dropped; an incomplete `--mcp-config` would otherwise fail only at run time.
+6. **Write `mcp-config.json`** next to `AGENTS.md` — merge the `server/mcp.json` of every required tool with `connector: mcp` into one file, keyed by tool name. A tool of that type missing its `server/mcp.json` is reported as a compile-time warning, not silently dropped; an incomplete `--mcp-config` would otherwise fail only at run time.
 
 7. **Update `agents.lock`** — write fresh hashes for every node touched in this compilation run.
 
@@ -458,7 +458,7 @@ authority:                                 # omit entirely on agents
 {{Operating prose. Prose never grants or restricts — only the frontmatter composes.}}
 ```
 
-Kind extras, one line each: **tool** adds `type: api|mcp|local` and `env: ENV_VAR_NAME`; **role** adds `watches: [...]` and a `decisions/` folder; **agent** adds `metadata: {schedule: ...}` and a `memory/` folder; **skill** keeps the body as the workflow steps. Composition rules: `never` unions, `decides` unions, `escalates` unions, precedence `never` > `escalates` > `decides`, unlisted actions escalate by default.
+Kind extras, one line each: **tool** adds `connector: api|mcp|local` and `env: ENV_VAR_NAME`; **role** adds `watches: [...]` and a `decisions/` folder; **agent** adds `metadata: {schedule: ...}` and a `memory/` folder; **skill** keeps the body as the workflow steps. Composition rules: `never` unions, `decides` unions, `escalates` unions, precedence `never` > `escalates` > `decides`, unlisted actions escalate by default.
 
 ## Tool Types
 

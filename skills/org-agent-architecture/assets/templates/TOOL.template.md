@@ -1,11 +1,12 @@
 ---
+type: oaa/Tool
 kind: tool
 name: {{tool-name}}
 description: {{One sentence: what this tool does and why it exists.}}
-type: {{api | mcp | local}}
+connector: {{api | mcp | local}}
 env: {{ENV_VAR_NAME}}                # the primary credential env var; name only, never the value
                                      # omit entirely if this tool needs no credentials
-provenance:                          # required for type: api and type: mcp
+provenance:                          # required for connector: api and connector: mcp
   source: {{upstream-url-or-internal}}
   status: {{first-party | third-party}}
   vendored: server/vendor/{{package}}

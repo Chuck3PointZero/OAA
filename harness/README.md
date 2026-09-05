@@ -111,7 +111,7 @@ If a release changes validator behavior (like 0.2.0's Tool Wiring generalization
 5. Check `agents.lock` (keyed by resolved path, e.g. `file://./agents/foo/AGENT.md`) — if all SHA-256 hashes match, `AGENTS.md` is current; stop
 6. Validate the resolved chain; abort on errors
 7. Write `AGENTS.md` with preamble, hard limits, memory schema, run order, escalation dispatch, env table
-8. Merge every required `type: mcp` tool's `server/mcp.json` into one `mcp-config.json`, written next to `AGENTS.md`. A tool missing its `server/mcp.json` is reported, not silently skipped — `--mcp-config` would otherwise fail at run time with no compile-time signal.
+8. Merge every required `connector: mcp` tool's `server/mcp.json` into one `mcp-config.json`, written next to `AGENTS.md`. A tool missing its `server/mcp.json` is reported, not silently skipped — `--mcp-config` would otherwise fail at run time with no compile-time signal.
 9. Update `agents.lock` with fresh hashes
 10. _(Pass 2, only when `models: [tiny]`)_ Copy `AGENTS.md` → `AGENTS.orig.md` and return `compactNeeded: true`. The caller should then invoke `get_compact_prompt_template()` and rewrite `AGENTS.orig.md` → `AGENTS.md` compactly, preserving every tool name, env var, and `never` rule verbatim.
 

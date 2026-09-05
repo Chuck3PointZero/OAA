@@ -27,7 +27,7 @@ export interface NodeFrontmatter {
     "allowed-tools"?: string[];
     authority?: Authority;
     metadata?: Record<string, unknown>;
-    type?: "api" | "mcp" | "local";
+    connector?: "api" | "mcp" | "local";
     env?: string;
     auth?: string;
     layer?: string;
