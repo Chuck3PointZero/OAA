@@ -1,0 +1,30 @@
+{
+  "lockfileVersion": 1,
+  "generatedAt": "2026-09-27T00:00:00Z",
+  "nodes": {
+    "agents/orbit/AGENT.md": {
+      "hash": "cae042b03a5878faebaecd85280927a560d3de33c059758f1376566bbfae535b"
+    },
+    "roles/operations-manager/ROLE.md": {
+      "hash": "714d19276f75c3855f57cac295e77856b4d4a6761972583246b01d892249e426"
+    },
+    "skills/monitor-signups/SKILL.md": {
+      "hash": "573a50f8dc9b7cfe4949484c97f613b4f1a04bf379cf8ad47210ef355f564fcc"
+    },
+    "skills/monitor-inbound-email/SKILL.md": {
+      "hash": "9f75d7b8820e99cefdc1a36cf609bada64b5ea3b2a110b5baeb3079b45c7c69f"
+    },
+    "skills/monitor-platform-health/SKILL.md": {
+      "hash": "87bb5aa6765cb24675bbacfaeecd72387da18308ca08ee8a1913e099fbe55cb3"
+    },
+    "skills/evaluate-and-flag-issues/SKILL.md": {
+      "hash": "440311b1813d5dddb1ce93342f92731f06c999e7afd0bbb594f02015952a56c2"
+    },
+    "skills/compose-ops-digest/SKILL.md": {
+      "hash": "f011d3de017635cb522ebd3771dc44d622e52efd5aebdebae643d80d41f7244f"
+    },
+    "tools/machincy-grokbot/TOOL.md": {
+      "hash": "37f7ea8ead5217b78fd49ca449d6a134439be4129eb3be4c0b61cd185e120f0b"
+    }
+  }
+}
