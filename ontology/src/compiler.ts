@@ -32,7 +32,7 @@ export function compileToMarkdown(
 
   lines.push("# Business Domain Ontology");
   lines.push("");
-  lines.push("> **Generated artifact** — compiled from `.rel` source files on " + now + ".");
+  lines.push("> **Generated artifact** - compiled from `.rel` source files on " + now + ".");
   lines.push("> Do not edit by hand. Edit the source files and run `compile_ontology`.");
   lines.push("");
   lines.push(
@@ -91,7 +91,7 @@ export function compileToMarkdown(
       lines.push("### Enumerations");
       lines.push("");
       for (const e of enums) {
-        lines.push("**" + e.name + "**" + (e.doc ? " — " + e.doc : ""));
+        lines.push("**" + e.name + "**" + (e.doc ? " - " + e.doc : ""));
         lines.push("");
         lines.push("Values: " + e.values.map((v: string) => "`" + v + "`").join(", "));
         lines.push("");
@@ -104,7 +104,7 @@ export function compileToMarkdown(
     lines.push("");
     lines.push(
       "Business concept names map to API vocabulary for each tool. " +
-      "This is the **only** place API names appear — everything above uses business terms."
+      "This is the **only** place API names appear - everything above uses business terms."
     );
     lines.push("");
     for (const map of maps) {
@@ -187,7 +187,7 @@ function renderEntity(entity: EntityDecl): string[] {
     lines.push("**Integrity constraints:**");
     lines.push("");
     for (const con of entity.constraints) {
-      lines.push("- `" + con.name + "`: `" + renderExpr(con.expr) + "`" + (con.doc ? " — " + con.doc : ""));
+      lines.push("- `" + con.name + "`: `" + renderExpr(con.expr) + "`" + (con.doc ? " - " + con.doc : ""));
     }
     lines.push("");
   }
@@ -258,10 +258,10 @@ function renderMap(map: MapDecl, symbols: OntologySymbols): string[] {
   const implicitPropEntries = propEntries.filter((e) => e.target === "implicit");
   const allImplicit = [...implicitEntries, ...implicitPropEntries];
   if (allImplicit.length > 0) {
-    lines.push("**Implicit mappings** (no direct API field — derived or computed in skill logic):");
+    lines.push("**Implicit mappings** (no direct API field - derived or computed in skill logic):");
     lines.push("");
     for (const e of allImplicit) {
-      lines.push("- `" + e.source + "`" + (e.note ? " — " + e.note : ""));
+      lines.push("- `" + e.source + "`" + (e.note ? " - " + e.note : ""));
     }
     lines.push("");
   }

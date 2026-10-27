@@ -3,7 +3,7 @@ version: 1
 description: >
   Example domain for a business that acquires customers through paid channels.
   Covers campaigns, spend, creatives, audiences, and acquisitions.
-  All concept names are business vocabulary — channel-agnostic.
+  All concept names are business vocabulary - channel-agnostic.
 
 concepts:
 
@@ -36,7 +36,7 @@ concepts:
         cardinality: one-to-many
 
   - name: Channel
-    description: A delivery mechanism for marketing content. Channel-agnostic — Meta, Google, email are all Channels.
+    description: A delivery mechanism for marketing content. Channel-agnostic - Meta, Google, email are all Channels.
     identity: channel-name
     properties:
       - name: name

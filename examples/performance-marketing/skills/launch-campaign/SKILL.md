@@ -19,14 +19,14 @@ Translates an approved campaign brief into a Meta Ads API call. All field mappin
 
 1. Load brief from `memory/briefs/{brief-id}.json`. If missing or incomplete: escalate with `brief-missing-required-fields`.
 2. Map brief fields to API fields using the ontology map:
-   - `budget` → `daily_budget` (in account currency subunits)
-   - `objective` → `optimization_goal` (enum translation: awareness→REACH, conversion→OFFSITE_CONVERSIONS, etc.)
-   - `start-date` / `end-date` → `start_time` / `end_time` (Unix timestamps)
-3. Call `meta-ads.create_campaign` with status=PAUSED (never activate immediately — role constraint).
+   - `budget` -> `daily_budget` (in account currency subunits)
+   - `objective` -> `optimization_goal` (enum translation: awareness->REACH, conversion->OFFSITE_CONVERSIONS, etc.)
+   - `start-date` / `end-date` -> `start_time` / `end_time` (Unix timestamps)
+3. Call `meta-ads.create_campaign` with status=PAUSED (never activate immediately - role constraint).
 4. If tool returns a policy violation code: escalate with `tool-returned-policy-violation`.
 5. Write the created campaign ID to `memory/campaigns-launched.json`.
 6. The role then decides whether to activate (separate tool call gated by role authority).
 
 ## Notes
 
-The brief schema is defined in `memory/briefs/README.md`. The skill validates required fields before calling the tool — a missing `objective` is a skill-level escalation, not a tool error.
+The brief schema is defined in `memory/briefs/README.md`. The skill validates required fields before calling the tool - a missing `objective` is a skill-level escalation, not a tool error.

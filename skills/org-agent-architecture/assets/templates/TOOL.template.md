@@ -4,6 +4,9 @@ kind: tool
 name: {{tool-name}}
 description: {{One sentence: what this tool does and why it exists.}}
 connector: {{api | mcp | local}}
+auth: {{api-key | oauth | bearer}}   # connector: api only; omit otherwise
+layer: {{sqlalchemy | filesystem | internal-service}}   # connector: local only; omit otherwise
+concept-map: {{ontology-map-name}}   # optional: the ontology map block that translates this tool's vocabulary
 env: {{ENV_VAR_NAME}}                # the primary credential env var; name only, never the value
                                      # omit entirely if this tool needs no credentials
 provenance:                          # required for connector: api and connector: mcp
@@ -26,7 +29,7 @@ straightforward, write only what would surprise a maintainer.}}
 
 {{Optional. Only add this section if a skill or role elsewhere in the graph
 defers a schema to this tool ("schema owned by {{tool-name}}"). Document the
-field names and types a maintainer would need — this is what that deferral
+field names and types a maintainer would need - this is what that deferral
 resolves to. Omit entirely if nothing defers to this tool.}}
 
 ## Declared Functions
@@ -35,8 +38,8 @@ resolves to. Omit entirely if nothing defers to this tool.}}
 |---|---|
 | `{{function_name}}` | {{what it does}} |
 
-## server/ — the implementation
+## server/ - the implementation
 
-- `server/mcp.json` (or client config) — transport configuration
-- `server/proxy/` — enforcement layer applying every `never`
-- `server/vendor/{{package}}/` — vendored upstream code, hash-pinned via agents.lock
+- `server/mcp.json` (or client config) - transport configuration
+- `server/proxy/` - enforcement layer applying every `never`
+- `server/vendor/{{package}}/` - vendored upstream code, hash-pinned via agents.lock

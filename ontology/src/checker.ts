@@ -11,7 +11,7 @@
 //   8. Cardinality is valid (enforced by parser, re-checked here)
 //   9. Possible undeclared relation: a property's type is the identity-key
 //      type of another declared entity, but no `relation` to that entity
-//      exists. This is the FK-shaped-property smell — a property that is
+//      exists. This is the FK-shaped-property smell - a property that is
 //      almost certainly meant to be a relation but was written as a plain
 //      scalar instead, which silently drops FK enforcement and join-ability.
 
@@ -69,7 +69,7 @@ export function checkPrograms(programs: Program[]): {
     entities: new Map(),
   };
 
-  // Phase 1: collect all declarations (first pass — just names)
+  // Phase 1: collect all declarations (first pass - just names)
   for (const prog of programs) {
     for (const stmt of prog.statements) {
       collectDeclaration(stmt, prog.sourcePath, symbols, findings);
@@ -146,7 +146,7 @@ function checkDuplicate(
       source: src,
       line: loc.line,
       col: loc.col,
-      message: `Duplicate name "${name}" — already declared in this ontology.`,
+      message: `Duplicate name "${name}" - already declared in this ontology.`,
     });
   }
 }
@@ -157,7 +157,7 @@ function checkDuplicate(
 
 // Maps an identity-key type name (e.g. "ProductID") to the base entity it
 // identifies (e.g. "Product"). Only base entities have a meaningful identity
-// key for this purpose — derived entities inherit their base's identity.
+// key for this purpose - derived entities inherit their base's identity.
 function buildIdentityTypeIndex(symbols: OntologySymbols): Map<string, string> {
   const index = new Map<string, string>();
   for (const [entityName, { decl }] of symbols.entities) {
@@ -256,7 +256,7 @@ function validateStatement(
       // Check 9: a property typed with another entity's identity-key type,
       // but no `relation` to that entity is declared. This is almost always
       // a foreign key that was written as a plain scalar property instead
-      // of a relation — it loses FK enforcement (sql.ts only emits a
+      // of a relation - it loses FK enforcement (sql.ts only emits a
       // REFERENCES column for declared relations) and join-ability
       // (query_concept has no way to resolve it back to the target row).
       const declaredRelationTargets = new Set(stmt.relations.map((r) => r.target));
@@ -273,7 +273,7 @@ function validateStatement(
             source: src,
             line: prop.loc.line,
             col: prop.loc.col,
-            message: `Property "${prop.name}" on "${stmt.name}" has type "${prop.type}", which is the identity key of entity "${targetEntity}". This looks like a foreign key written as a plain property — it gets no FK enforcement and can't be resolved by query_concept. Is this intentional?`,
+            message: `Property "${prop.name}" on "${stmt.name}" has type "${prop.type}", which is the identity key of entity "${targetEntity}". This looks like a foreign key written as a plain property - it gets no FK enforcement and can't be resolved by query_concept. Is this intentional?`,
             fix: `relation ${prop.name} : ${targetEntity} [many-to-one]`,
           });
         }

@@ -6,7 +6,7 @@
 // ---------------------------------------------------------------------------
 export function emitSchemaSQL(programs, symbols) {
     const lines = [];
-    lines.push("-- OAA Ontology schema — generated from .rel source files.");
+    lines.push("-- OAA Ontology schema - generated from .rel source files.");
     lines.push("-- Do not edit by hand. Regenerate with compile_schema.");
     lines.push("-- Base entities become tables; derived concepts become views.");
     lines.push("");
@@ -74,9 +74,9 @@ export function exprToSQL(expr, enumValues = new Set()) {
             return "NOT (" + exprToSQL(expr.operand, enumValues) + ")";
         case "IdentRef":
             // An IdentRef resolves to either:
-            //   (a) an enum member value  → emit as a quoted SQL string literal
-            //   (b) a boolean constant    → emit as SQL integer (1 / 0)
-            //   (c) a property reference  → emit as a column name (kebab→underscore)
+            //   (a) an enum member value  -> emit as a quoted SQL string literal
+            //   (b) a boolean constant    -> emit as SQL integer (1 / 0)
+            //   (c) a property reference  -> emit as a column name (kebab->underscore)
             if (enumValues.has(expr.name)) {
                 return "'" + expr.name.replace(/'/g, "''") + "'";
             }
@@ -125,11 +125,11 @@ function renderTable(entity, symbols) {
         out.push("-- " + entity.doc);
     out.push("CREATE TABLE IF NOT EXISTS " + entity.name + " (");
     const cols = [];
-    // Primary key column — 'id' TEXT (all identity types are String aliases)
+    // Primary key column - 'id' TEXT (all identity types are String aliases)
     cols.push("  id TEXT PRIMARY KEY");
     for (const prop of entity.properties) {
         const sqlType = mapPropertyType(prop.type, symbols);
-        // Note: do NOT put SQL -- comments inline on column lines — they eat the trailing comma.
+        // Note: do NOT put SQL -- comments inline on column lines - they eat the trailing comma.
         // Doc strings are available in ONTOLOGY.md.
         cols.push("  " + propToCol(prop.name) + " " + sqlType);
     }

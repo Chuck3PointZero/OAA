@@ -78,7 +78,7 @@ export class OntologyStore {
         if (db) {
             this.db = db;
             this.dbPath = ":memory:";
-            return { ok: true, dbPath: ":memory: (ephemeral — persists only while server is running)" };
+            return { ok: true, dbPath: ":memory: (ephemeral - persists only while server is running)" };
         }
         return { ok: false, error: "Could not open SQLite database at any path." };
     }
@@ -136,7 +136,7 @@ export class OntologyStore {
         const vals = [];
         if (filters && Object.keys(filters).length > 0) {
             // Resolve the base EntityDecl so we can validate filter column names.
-            // DerivedEntityDecl is a SQL view over its base entity — same columns.
+            // DerivedEntityDecl is a SQL view over its base entity - same columns.
             const entityEntry = this.symbols.entities.get(conceptName);
             const baseDecl = entityEntry.decl.kind === "EntityDecl"
                 ? entityEntry.decl

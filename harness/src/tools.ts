@@ -9,9 +9,9 @@ import {
 import type { ValidationFinding } from "./types.js";
 
 // ---------------------------------------------------------------------------
-// Compact prompt template — embedded so the package works when installed via
+// Compact prompt template - embedded so the package works when installed via
 // npm or GitHub without the skill assets directory present on disk.
-// Source: skills/org-agent-architecture/assets/prompts/compact-prompt-system-prompt.md
+// Source: skills/org-agent-architecture/assets/prompts/compact-agent.prompt.md
 // ---------------------------------------------------------------------------
 
 const COMPACT_PROMPT_TEMPLATE = `You compile a task-execution prompt for a SMALL local language model acting as an autonomous
@@ -92,7 +92,7 @@ rewrite, not to summarize or shorten the original text.
   so it can comply without needing the file.
 - The escalation/failure-reporting path if the role has one (what to call and with what
   arguments when something fails).
-- Every memory field name from the agent's memory schema, if one exists — the model writes
+- Every memory field name from the agent's memory schema, if one exists - the model writes
   these back in its \`memory_state\` block and will invent names if none are given.
 
 Everything else - explanations, history, design tradeoffs, cross-references to sibling
@@ -118,7 +118,7 @@ export const toolDefinitions = [
   {
     name: "compile_agent",
     description:
-      "Walk the OAA chain for a named agent (AGENT.md → ROLE(s) → SKILL(s) → TOOL(s)), compose authority, write AGENTS.md as a runtime instruction file, merge every required tool's server/mcp.json into one mcp-config.json, and update agents.lock. Required before running an agent.",
+      "Walk the OAA chain for a named agent (AGENT.md -> ROLE(s) -> SKILL(s) -> TOOL(s)), compose authority, write AGENTS.md as a runtime instruction file, merge every required tool's server/mcp.json into one mcp-config.json, and update agents.lock. Required before running an agent.",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -201,7 +201,7 @@ export const toolDefinitions = [
   {
     name: "run_agent",
     description:
-      "Return a named agent's compiled AGENTS.md content, ready to hand to an LLM as its full operating instructions. Execution itself is intentionally out of scope — it depends on which CLI or provider is hosting the run, which this compiler does not assume. See the OAA README's 'Running a Compiled Agent' section for the concrete launch command.",
+      "Return a named agent's compiled AGENTS.md content, ready to hand to an LLM as its full operating instructions. Execution itself is intentionally out of scope - it depends on which CLI or provider is hosting the run, which this compiler does not assume. See the OAA README's 'Running a Compiled Agent' section for the concrete launch command.",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -248,7 +248,7 @@ export async function handleTool(
       try {
         const result = compileAgent(agentName, rootDir);
         const summary = [
-          `✅ Compiled agent: ${agentName}`,
+          `Compiled agent: ${agentName}`,
           ``,
           `AGENTS.md written to: ${result.agentsPath}`,
           `mcp-config.json written to: ${result.mcpConfigPath}`,
@@ -268,7 +268,7 @@ export async function handleTool(
           ...(result.compactNeeded
             ? [
                 ``,
-                `📋 Pass 2 required: this agent has models: [tiny].`,
+                `Pass 2 required: this agent has models: [tiny].`,
                 `   AGENTS.orig.md written to: ${result.agentsOrigPath}`,
                 `   Call get_compact_prompt_template, rewrite AGENTS.orig.md following those`,
                 `   instructions, verify all tool names / env vars / never-list items are`,
@@ -279,8 +279,8 @@ export async function handleTool(
           ...(result.missingMcpConfigs.length > 0
             ? [
                 ``,
-                `⚠️  Missing server/mcp.json for: ${result.missingMcpConfigs.join(", ")}`,
-                `   mcp-config.json was written without these — add each tool's`,
+                `Warning: missing server/mcp.json for: ${result.missingMcpConfigs.join(", ")}`,
+                `   mcp-config.json was written without these - add each tool's`,
                 `   server/mcp.json and recompile before using --mcp-config to run this agent.`,
               ]
             : []),
@@ -338,7 +338,7 @@ export async function handleTool(
         }
 
         if (result.findings.length === 0) {
-          lines.push("No findings — graph is VALID.");
+          lines.push("No findings - graph is VALID.");
         }
 
         return text(lines.join("\n"));
@@ -382,7 +382,7 @@ export async function handleTool(
 
       // By design: this compiler resolves the chain and hands back AGENTS.md
       // content. Actually running it is host-specific (which CLI, which
-      // provider) and is deliberately not this tool's job — see the OAA
+      // provider) and is deliberately not this tool's job - see the OAA
       // README's "Running a Compiled Agent" section for the concrete command.
       try {
         const chain = resolveChain(agentName, rootDir);
@@ -402,9 +402,9 @@ export async function handleTool(
         const agentsContent = readFileSync(agentsPath, "utf-8");
 
         return text(
-          `Execution is host-specific by design — this compiler doesn't assume which CLI or provider is running the agent. ` +
+          `Execution is host-specific by design - this compiler doesn't assume which CLI or provider is running the agent. ` +
             `See the OAA README's "Running a Compiled Agent" section for the concrete launch command.\n\n` +
-            `The compiled AGENTS.md for "${agentName}" follows — hand it to your LLM as its full operating instructions:\n\n` +
+            `The compiled AGENTS.md for "${agentName}" follows - hand it to your LLM as its full operating instructions:\n\n` +
             `---\n\n${agentsContent}`
         );
       } catch (e) {

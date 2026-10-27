@@ -6,7 +6,7 @@ export class ParseError extends Error {
     col;
     file;
     constructor(message, line, col, file) {
-        super(`Parse error at ${file}:${line}:${col} — ${message}`);
+        super(`Parse error at ${file}:${line}:${col} - ${message}`);
         this.line = line;
         this.col = col;
         this.file = file;

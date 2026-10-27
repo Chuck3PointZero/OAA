@@ -1,6 +1,6 @@
 # Business Domain Ontology
 
-> **Generated artifact** — compiled from `.onto.yaml` source files on 2026-06-13T18:48:12.771Z.
+> **Generated artifact** - compiled from `.onto.yaml` source files on 2026-06-13T18:48:12.771Z.
 > Do not edit by hand. Edit the source files and run compile_ontology.
 
 This ontology defines the canonical vocabulary for this organization's business domain. All OAA agent roles, skills, and authority fields reference these concept names. Tool nodes provide the mapping from these business names to API vocabulary.
@@ -16,7 +16,7 @@ This ontology defines the canonical vocabulary for this organization's business 
 ## Customer Acquisition
 <a id="customer-acquisition"></a>
 
-Example domain for a business that acquires customers through paid channels. Covers campaigns, spend, creatives, audiences, and acquisitions. All concept names are business vocabulary — channel-agnostic.
+Example domain for a business that acquires customers through paid channels. Covers campaigns, spend, creatives, audiences, and acquisitions. All concept names are business vocabulary - channel-agnostic.
 
 ### Campaign
 
@@ -44,7 +44,7 @@ A coordinated marketing effort with a defined budget, objective, and schedule.
 
 ### Channel
 
-A delivery mechanism for marketing content. Channel-agnostic — Meta, Google, email are all Channels.
+A delivery mechanism for marketing content. Channel-agnostic - Meta, Google, email are all Channels.
 
 **Identity:** `channel-name`
 
@@ -171,14 +171,14 @@ _Unmapped concepts (no direct API equivalent in this tool): Channel_
 
 **Notes:**
 
-> Meta does not expose a native Audience object that maps cleanly to our Audience concept. Audiences are CustomAudiences (remarketing/lookalike) or targeting specs (interest-based). Channel has no direct API equivalent — it is implicit in the Meta account itself. The meta-ads skill handles Channel → Platform translation in its targeting workflows.
+> Meta does not expose a native Audience object that maps cleanly to our Audience concept. Audiences are CustomAudiences (remarketing/lookalike) or targeting specs (interest-based). Channel has no direct API equivalent - it is implicit in the Meta account itself. The meta-ads skill handles Channel -> Platform translation in its targeting workflows.
 
 ## Quick Reference
 
 | Concept | Domain | Description |
 |---------|--------|-------------|
 | [Campaign](#campaign) | customer-acquisition | A coordinated marketing effort with a defined budget, objective, and schedule. |
-| [Channel](#channel) | customer-acquisition | A delivery mechanism for marketing content. Channel-agnostic — Meta, Google, email are all Channels. |
+| [Channel](#channel) | customer-acquisition | A delivery mechanism for marketing content. Channel-agnostic - Meta, Google, email are all Channels. |
 | [Creative](#creative) | customer-acquisition | A piece of marketing content used in campaigns. |
 | [Audience](#audience) | customer-acquisition | A segment of potential customers targeted by campaigns. |
 | [MarketingSpend](#marketingspend) | customer-acquisition | Money committed to a campaign on a channel in a reporting period. |

@@ -37,7 +37,7 @@ Grok Bot calls the **real** Machincy API over HTTPS from the cloud computer. Thi
 | Auth | Header `X-API-Key: $API_KEY` |
 | Env secrets | `API_KEY` (required), `MACHINCY_API_BASE` (required) |
 
-Values live only in the Grok Bot secret/env store — never in prompts or this file.
+Values live only in the Grok Bot secret/env store - never in prompts or this file.
 
 ## How to call
 
@@ -45,7 +45,7 @@ Values live only in the Grok Bot secret/env store — never in prompts or this f
 curl -sS -H "X-API-Key: $API_KEY" "$MACHINCY_API_BASE/signup?limit=1"
 ```
 
-Use the cloud computer’s HTTP client (`curl` or equivalent). Expect JSON. Non-2xx, timeout, or unparseable body is a tool failure for that call.
+Use the cloud computer's HTTP client (`curl` or equivalent). Expect JSON. Non-2xx, timeout, or unparseable body is a tool failure for that call.
 
 ## Declared functions (read / list)
 

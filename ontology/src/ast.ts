@@ -7,7 +7,7 @@ export type Cardinality =
   | "many-to-many";
 
 // ---------------------------------------------------------------------------
-// Expressions — used in constraints and where clauses
+// Expressions - used in constraints and where clauses
 // ---------------------------------------------------------------------------
 
 export type Expr =

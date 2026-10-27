@@ -40,7 +40,7 @@ export class LexerError extends Error {
     public line: number,
     public col: number
   ) {
-    super(`Lexer error at ${line}:${col} — ${message}`);
+    super(`Lexer error at ${line}:${col} - ${message}`);
   }
 }
 
@@ -87,7 +87,7 @@ export function tokenize(source: string, filePath: string): Token[] {
       if (/[a-zA-Z0-9_]/.test(ch)) {
         result += advance();
       } else if (ch === "-" && /[a-zA-Z0-9]/.test(peek(1))) {
-        // Lookahead: hyphen immediately followed by alphanumeric → part of ident
+        // Lookahead: hyphen immediately followed by alphanumeric -> part of ident
         result += advance(); // consume '-'
         result += advance(); // consume next char
       } else {

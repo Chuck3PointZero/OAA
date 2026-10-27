@@ -9,7 +9,10 @@ concept-map: meta-ads    # references the map tool name in ontology/customer-acq
 provenance:
   source: github.com/pipeboard-co/meta-ads-mcp
   status: third-party
-  vendored: server/vendor/meta-ads-mcp
+  enforcement-gap:
+    reason: This is an illustrative example. The enforcement proxy and the vendored upstream server are described below but are not built in this repository, and server/mcp.json shows the shape of the transport config only.
+    owner: OAA examples
+    revisit: 2099-01-01
   pinned-in: agents.lock
 authority:
   never:
@@ -24,7 +27,7 @@ authority:
 
 Wraps the [Meta Marketing API](https://developers.facebook.com/docs/marketing-apis/) via the `meta-ads-mcp` MCP server. Authenticates with a long-lived system user access token passed as `META_ACCESS_TOKEN`.
 
-**Auth model**: System user token with `ads_management` and `ads_read` permissions on the ad account. Token is read from the environment — never hard-coded, never logged.
+**Auth model**: System user token with `ads_management` and `ads_read` permissions on the ad account. Token is read from the environment - never hard-coded, never logged.
 
 **Rate limits**: Meta enforces a per-account call budget. The proxy layer queues burst calls and retries with exponential backoff up to 3 times before surfacing an error.
 
@@ -39,9 +42,11 @@ Wraps the [Meta Marketing API](https://developers.facebook.com/docs/marketing-ap
 
 ## server/
 
-- `server/mcp.json` — transport config (stdio; reads `META_ACCESS_TOKEN` from env)
-- `server/proxy/` — enforcement layer; applies every `never` rule before forwarding
-- `server/vendor/meta-ads-mcp/` — vendored upstream, hash-pinned in `agents.lock`
+In this example only `server/mcp.json` exists. A real tool would also have:
+
+- `server/mcp.json` - transport config (stdio; reads `META_ACCESS_TOKEN` from env)
+- `server/proxy/` - enforcement layer; applies every `never` rule before forwarding *(not built here: see the acknowledged enforcement gap above)*
+- `server/vendor/meta-ads-mcp/` - vendored upstream, hash-pinned in `agents.lock` *(not vendored here)*
 
 ## Concept Map
 

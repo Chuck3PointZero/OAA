@@ -1,4 +1,4 @@
-<!-- GENERATED — do not hand-edit -->
+<!-- GENERATED - do not hand-edit -->
 <!-- Source:    agents/orbit/AGENT.md -->
 <!-- Generated: 2026-09-27T00:00:00Z -->
 
@@ -47,9 +47,9 @@ Optional baselines for `evaluate-and-flag-issues` thresholds (e.g. expected dail
 
 Run skills in sequence. Each skill produces a packet; pass it to the next stage.
 
-### 1. monitor-signups → signup-health packet
+### 1. monitor-signups -> signup-health packet
 
-**Tool:** `machincy-grokbot` — `GET /signup`
+**Tool:** `machincy-grokbot` - `GET /signup`
 
 1. Establish window (last 24h unless instructed otherwise). Record `window_start` / `window_end`.
 2. Call `machincy-grokbot__list_subscribers`; paginate as needed. Use `status` and `welcome_sent_at` filters where available.
@@ -61,9 +61,9 @@ Run skills in sequence. Each skill produces a packet; pass it to the next stage.
 
 ---
 
-### 2. monitor-inbound-email → inbound-email packet
+### 2. monitor-inbound-email -> inbound-email packet
 
-**Tool:** `machincy-grokbot` — `GET /admin/support/inbound`
+**Tool:** `machincy-grokbot` - `GET /admin/support/inbound`
 
 1. Call `machincy-grokbot__list_inbound_emails` (oldest-first or API default). Prefer open/untriaged rows if status filters are available.
 2. Compute: `open_count`, `oldest_open_age`, `past_sla_count` (threshold from run instructions or role default), `sample_ids`, `anomalies`.
@@ -75,9 +75,9 @@ Run skills in sequence. Each skill produces a packet; pass it to the next stage.
 
 ---
 
-### 3. monitor-platform-health → platform-health packet
+### 3. monitor-platform-health -> platform-health packet
 
-**Tool:** `machincy-grokbot` — multiple endpoints
+**Tool:** `machincy-grokbot` - multiple endpoints
 
 1. **Uptime.** Call `machincy-grokbot__list_uptime_events` (last 24h). Note `health_check_failure` / `smoke_test_failure` rows and `notified` status.
 2. **Security.** Call `machincy-grokbot__list_security_events`. Count confirmed vs noise.
@@ -91,19 +91,19 @@ Run skills in sequence. Each skill produces a packet; pass it to the next stage.
 
 ---
 
-### 4. evaluate-and-flag-issues → flagged_issues
+### 4. evaluate-and-flag-issues -> flagged_issues
 
-**Tools:** none — pure judgment against role thresholds.
+**Tools:** none - pure judgment against role thresholds.
 
 1. Require all three packets. If any packet is missing due to monitor failure, treat that domain as **unknown** and add `monitor-skill-failure` for that domain to flagged_issues.
 2. Apply thresholds (from `memory/state.json` baselines or run instructions):
-   - `welcome_not_sent_count` above threshold → `welcome-dispatch-gap`
-   - `past_sla_count > 0` → `inbound-backlog-past-sla`
-   - uptime failures or unnotified rows → `smoke-or-uptime-failure` / `uptime-alert-dispatch-failure`
-   - `security_events_count > 0` with confirmed incident semantics → `confirmed-security-incident`
-   - `app_error_spike` or `write_integrity_ok == false` → `app-error-spike` / `unattributed-database-write`
-   - signup anomaly strings in packet → `signup-anomaly`
-3. Output: `flagged_issues` list — each item has `code`, `summary`, `source_packet`, `recommend`.
+   - `welcome_not_sent_count` above threshold -> `welcome-dispatch-gap`
+   - `past_sla_count > 0` -> `inbound-backlog-past-sla`
+   - uptime failures or unnotified rows -> `smoke-or-uptime-failure` / `uptime-alert-dispatch-failure`
+   - `security_events_count > 0` with confirmed incident semantics -> `confirmed-security-incident`
+   - `app_error_spike` or `write_integrity_ok == false` -> `app-error-spike` / `unattributed-database-write`
+   - signup anomaly strings in packet -> `signup-anomaly`
+3. Output: `flagged_issues` list - each item has `code`, `summary`, `source_packet`, `recommend`.
 4. Drop informational noise that does not need a human today.
 5. Confirmed security incidents and health/uptime red flags may short-circuit to the human before digest time if run instructions say so.
 
@@ -111,17 +111,17 @@ Run skills in sequence. Each skill produces a packet; pass it to the next stage.
 
 ---
 
-### 5. compose-ops-digest → human-facing digest
+### 5. compose-ops-digest -> human-facing digest
 
 **Tools:** none.
 
 1. Inputs: signup-health packet, inbound-email packet, platform-health packet, and `flagged_issues`.
 2. Structure (in order):
-   - **Red / flagged** — each flagged_issues item, one line: code + summary
-   - **Signups** — new count, welcome gaps, status mix highlights
-   - **Inbound email** — open count, oldest age, past-SLA count
-   - **Platform** — uptime, security event count, app errors, write integrity
-   - **Recommended actions** — human actions only; never imply Orbit will send mail or change data
+   - **Red / flagged** - each flagged_issues item, one line: code + summary
+   - **Signups** - new count, welcome gaps, status mix highlights
+   - **Inbound email** - open count, oldest age, past-SLA count
+   - **Platform** - uptime, security event count, app errors, write integrity
+   - **Recommended actions** - human actions only; never imply Orbit will send mail or change data
 3. Tone: short, lead with red, empty sections as one line ("Signups: quiet").
 4. Post or return to human conversation. Do not re-query the API here; do not call write endpoints; do not expand into full row dumps unless a flagged issue requires one id as evidence.
 
@@ -150,7 +150,7 @@ All other flagged issues travel via the ops digest at normal cadence.
 | `API_KEY` | `X-API-Key` header for all `machincy-grokbot` HTTPS calls |
 | `MACHINCY_API_BASE` | Base URL for the Machincy API (e.g. `https://YOUR_DOMAIN/api/v1`) |
 
-Values live only in the Grok Bot secret/env store — never in prompts or node files.
+Values live only in the Grok Bot secret/env store - never in prompts or node files.
 
 ---
 

@@ -1,3 +1,32 @@
+---
+name: compact-agent
+oaa-version: 0.8.0
+job: "Rewrite a narrative AGENTS.md as a short, blunt rule set for a small model (models: [tiny]), keeping every fact"
+inputs: ["agent name", "wrapper root"]
+reads: ["agents/<name>/AGENTS.orig.md"]
+writes: ["agents/<name>/AGENTS.md"]
+never: ["drop a tool name", "an environment variable", "a never-list item or a behaviour-changing value", "modify a source node"]
+---
+
+# Compact an Agent (Pass 2)
+
+`compile-agent.prompt.md` runs this when an agent declares `models: [tiny]`. By then it has written
+the narrative `AGENTS.md` and copied it to `AGENTS.orig.md`.
+
+## Steps
+
+1. Read `agents/<name>/AGENTS.orig.md`, the narrative source.
+2. Rewrite it following the instructions below: Identity, Tools, Rules, Workflow, Memory (if the
+   agent has a memory schema), Output contract. Cut rationale, history and explanatory prose.
+3. **Verify before writing:** every tool name, environment variable and never-list item from
+   `AGENTS.orig.md` appears verbatim in your rewrite.
+4. Write the result to `AGENTS.md`, with `<!-- compacted: see AGENTS.orig.md for the narrative source -->`
+   as its first line.
+5. If the check in step 3 fails, leave `AGENTS.md` as the narrative version and report what was
+   missing. The next compile retries.
+
+## Instructions
+
 You compile a task-execution prompt for a SMALL local language model acting as an autonomous
 agent. You will be given a compiled AGENTS.md (identity, roles, skills, tools, composed
 authority/never-list, required environment) for one agent. Produce a short, blunt,
@@ -76,7 +105,7 @@ rewrite, not to summarize or shorten the original text.
   so it can comply without needing the file.
 - The escalation/failure-reporting path if the role has one (what to call and with what
   arguments when something fails).
-- Every memory field name from the agent's memory schema, if one exists — the model writes
+- Every memory field name from the agent's memory schema, if one exists - the model writes
   these back in its `memory_state` block and will invent names if none are given.
 
 Everything else - explanations, history, design tradeoffs, cross-references to sibling

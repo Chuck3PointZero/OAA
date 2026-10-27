@@ -1,7 +1,7 @@
 {
   "name": "organizational-agents",
-  "version": "0.7.0",
-  "description": "Organizational Agent Architecture (OAA). Structure multi-agent systems the way companies are structured — agents fill roles, roles require skills, skills require tools, bounded authority composes down the chain. Bundles two skills (org-agent-architecture, oaa-ontology-design) and two MCP servers (harness for compile/validate/run, ontology for domain memory).",
+  "version": "0.8.0",
+  "description": "Organizational Agent Architecture (OAA). Structure multi-agent systems the way companies are structured - agents fill roles, roles require skills, skills require tools, bounded authority composes down the chain. Bundles two skills (org-agent-architecture, oaa-ontology-design), a small command-line utility for compile and validate, and one MCP server (ontology, for domain memory).",
   "author": {
     "name": "Chuck 3.0",
     "email": "dr.kosta@yahoo.com"
@@ -26,13 +26,6 @@
   ],
   "skills": ["./skills/"],
   "mcpServers": {
-    "oaa-harness": {
-      "command": "node",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/harness/dist/index.js"],
-      "env": {
-        "NODE_PATH": "${CLAUDE_PLUGIN_DATA}/harness/node_modules"
-      }
-    },
     "oaa-ontology": {
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/ontology/dist/index.js"],
