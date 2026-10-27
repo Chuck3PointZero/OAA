@@ -4,7 +4,6 @@ kind: agent
 name: {{agent-name}}
 description: {{One sentence: what this runner does.}}
 executor: {{llm | remote | predicate | human}}   # omit for llm. predicate: every skill step must be deterministic. human: never scheduled.
-models: [{{tiny}}]                   # optional capability hints about the target model; omit unless needed
 fills:                               # agent-kind spelling of `requires`
   - ../../roles/{{role-name}}        # one line per role; the agent inherits their skills
 metadata:

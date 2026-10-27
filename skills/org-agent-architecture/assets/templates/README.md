@@ -14,8 +14,6 @@ Resolve every {{placeholder}}; delete guidance comments; omit (do not empty) unu
 | ROLE.template.md | An accountability with decision rights and escalation thresholds |
 | SKILL.template.md | A procedure (agentskills.io-compatible) |
 | TOOL.template.md | A single named tool - the default; one TOOL.md per server or capability |
-| TOOL-connector.template.md | The shared node for a multi-capability server; owns server/. Used only with the connector/capability split (see SKILL.md, "Decomposing") - capability files are copies of TOOL.template.md with `requires: [./TOOL.md]` added, not a separate template |
-| NOUN.template.md | A domain object (only after the noun layer is adopted) |
 | manifest.json | Per-directory manifest; filename becomes <kind>.json |
 | examples/ | One filled example of every kind and every `executor`, as a small company that validates clean (see its README). Read it for shape; do not copy from it. |
 | agents.lock.json | Shape of lockfile entries (a generated file, shown for reference only) |

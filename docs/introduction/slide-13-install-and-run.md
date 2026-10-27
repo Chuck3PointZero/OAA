@@ -1,4 +1,4 @@
-# Slide 13 - Install and Run
+# Slide 13 — Install and Run
 
 **Title:** From Zero to Running Agent
 
@@ -14,7 +14,7 @@ npx skills add Chuck3PointZero/OAA --skill '*'
 claude skills add Chuck3PointZero/OAA
 ```
 
-Once installed, mention OAA or ask to create an agent hierarchy - the skill activates automatically.
+Once installed, mention OAA or ask to create an agent hierarchy — the skill activates automatically.
 
 ## Step 2: Add the MCP Servers (optional, unlocks compile + validate)
 
@@ -29,7 +29,7 @@ claude mcp add oaa-ontology \
 
 ```bash
 # Compile (the AI does this for you via compile_agent)
-# -> writes AGENTS.md + mcp-config.json
+# → writes AGENTS.md + mcp-config.json
 
 # Run the compiled agent
 claude.exe \
@@ -42,7 +42,7 @@ claude.exe \
 
 ## What AGENTS.md Is
 
-`AGENTS.md` is NOT a record of the compile - it **IS the payload**. "Running" an agent means handing that file to an LLM as its complete operating instructions. One trigger -> one payload -> one autonomous run -> exit.
+`AGENTS.md` is NOT a record of the compile — it **IS the payload**. "Running" an agent means handing that file to an LLM as its complete operating instructions. One trigger → one payload → one autonomous run → exit.
 
 ## Team Distribution
 
@@ -59,8 +59,8 @@ Add to `.claude/settings.json` to make the OAA marketplace available to the whol
 
 ## Speaker Notes
 
-- `--system-prompt-file` REPLACES Claude Code's default system prompt with the verbatim contents of `AGENTS.md`. Not append - the compiled agent is exactly and only what AGENTS.md says.
+- `--system-prompt-file` REPLACES Claude Code's default system prompt with the verbatim contents of `AGENTS.md`. Not append — the compiled agent is exactly and only what AGENTS.md says.
 - `--strict-mcp-config` scopes this run to only the tools AGENTS.md names, isolated from whatever else sits in the operator's global config.
-- `mcp-config.json` is NOT hand-authored - `compile_agent` writes it by merging the `server/mcp.json` of every tool the agent's chain requires.
-- Scheduling (cron, Windows Task Scheduler, GitHub Actions) is out of scope for OAA - any host that can run the command above on schedule satisfies the contract.
+- `mcp-config.json` is NOT hand-authored — `compile_agent` writes it by merging the `server/mcp.json` of every tool the agent's chain requires.
+- Scheduling (cron, Windows Task Scheduler, GitHub Actions) is out of scope for OAA — any host that can run the command above on schedule satisfies the contract.
 - v0.5.0 breaking change: agents.lock keys are now resolved paths, not declared name fields. Delete old lockfile and re-run compile_agent.

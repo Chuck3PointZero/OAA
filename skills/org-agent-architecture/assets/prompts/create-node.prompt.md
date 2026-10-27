@@ -32,7 +32,7 @@ is created.
    `server/`, `references/`), and a flat `<name>.<kind>.md` file when it does not.
 
 5. **Copy the template** from `.oaa/templates/` (`AGENT.template.md`, `ROLE.template.md`,
-   `SKILL.template.md`, `TOOL.template.md` or `TOOL-connector.template.md`). Never write frontmatter
+   `SKILL.template.md` or `TOOL.template.md`). Never write frontmatter
    from memory. For a directory node, also copy `manifest.json`.
 
 6. **Fill the frontmatter first, the body second.** The frontmatter is the contract and the body is
