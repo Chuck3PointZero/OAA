@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 /**
- * @oaa/ontology — MCP server for OAA business domain ontology
+ * @oaa/ontology - MCP server for OAA business domain ontology
  *
  * Source format: .rel files (formal logic language)
  * Compiled outputs: ONTOLOGY.md + schema.sql (generated, never hand-edited)
  *
  * Tools:
- *   compile_ontology   — parse .rel files, type-check, write ONTOLOGY.md
- *   validate_ontology  — validate without writing output
- *   get_concepts       — return structured concept catalog
- *   compile_schema     — emit schema.sql + initialise SQLite memory store
- *   write_entity       — upsert an entity instance into the store
- *   query_concept      — query base entity or derived concept (returns rows)
+ *   compile_ontology   - parse .rel files, type-check, write ONTOLOGY.md
+ *   validate_ontology  - validate without writing output
+ *   get_concepts       - return structured concept catalog
+ *   compile_schema     - emit schema.sql + initialise SQLite memory store
+ *   write_entity       - upsert an entity instance into the store
+ *   query_concept      - query base entity or derived concept (returns rows)
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -40,7 +40,7 @@ function resolveRootDir(): string {
 
 const ROOT_DIR = resolveRootDir();
 
-// Singleton store — initialised on first compile_schema call
+// Singleton store - initialised on first compile_schema call
 let store: OntologyStore | null = null;
 let storeRootDir: string | null = null;
 
@@ -49,7 +49,7 @@ const toolDefinitions = [
     name: "compile_ontology",
     description:
       "Parse all .rel files in the workspace, type-check them, then compile ONTOLOGY.md. " +
-      "ONTOLOGY.md is generated output — never edit it directly. " +
+      "ONTOLOGY.md is generated output - never edit it directly. " +
       "Compilation fails if there are type errors; warnings are reported but do not block.",
     inputSchema: {
       type: "object" as const,
@@ -77,7 +77,7 @@ const toolDefinitions = [
   {
     name: "get_concepts",
     description:
-      "Return the concept catalog from the workspace .rel files — entities, derived concepts, " +
+      "Return the concept catalog from the workspace .rel files - entities, derived concepts, " +
       "their properties, relations, constraints, and identity keys. " +
       "Optionally filter to a specific entity name.",
     inputSchema: {
@@ -92,7 +92,7 @@ const toolDefinitions = [
   {
     name: "compile_schema",
     description:
-      "Emit schema.sql from the .rel source files — CREATE TABLE for each base entity, " +
+      "Emit schema.sql from the .rel source files - CREATE TABLE for each base entity, " +
       "CREATE VIEW for each derived concept. Also initialises the SQLite instance store " +
       "at <rootDir>/memory/ontology.db. Run this once after authoring or changing .rel files. " +
       "Requires the server to be started with: node --experimental-sqlite dist/index.js",
@@ -130,7 +130,7 @@ const toolDefinitions = [
     name: "query_concept",
     description:
       "Query entity instances from the store. Works for both base entities (SELECT * FROM Entity) " +
-      "and derived concepts (SELECT * FROM DerivedConcept — these are SQL views that apply the " +
+      "and derived concepts (SELECT * FROM DerivedConcept - these are SQL views that apply the " +
       "where clause from the .rel definition). Optionally filter by field values. " +
       "Returns rows as JSON. Example: query_concept UnderachievingCampaign returns all " +
       "campaigns where rolling_3day_cpa > 35.",
@@ -178,7 +178,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
         if (errors.length > 0) {
           return text(
-            "Cannot compile — " + errors.length + " error(s) must be fixed first:\n\n" +
+            "Cannot compile - " + errors.length + " error(s) must be fixed first:\n\n" +
             errors.map((e) => "  [" + e.check + "] " + e.source + ":" + e.line + "\n    " + e.message).join("\n") +
             "\n\nRun validate_ontology for full details."
           );
@@ -209,7 +209,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           "  Tool maps:        " + programs.flatMap(p => p.statements).filter(s => s.kind === "MapDecl").length,
         ];
         if (warnings.length > 0) {
-          lines.push("\nWarnings: " + warnings.length + " — run validate_ontology for details.");
+          lines.push("\nWarnings: " + warnings.length + " - run validate_ontology for details.");
         }
 
         return text(lines.join("\n"));
@@ -231,7 +231,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const grouped = groupFindings(result.findings);
 
         if (grouped.errors.length > 0) {
-          out.push("ERRORS — must fix (" + grouped.errors.length + ")");
+          out.push("ERRORS - must fix (" + grouped.errors.length + ")");
           for (const f of grouped.errors) {
             out.push("  [" + f.check + "] " + f.source + ":" + f.line + ":" + f.col);
             out.push("    " + f.message);
@@ -240,7 +240,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           out.push("");
         }
         if (grouped.warnings.length > 0) {
-          out.push("WARNINGS — should fix (" + grouped.warnings.length + ")");
+          out.push("WARNINGS - should fix (" + grouped.warnings.length + ")");
           for (const f of grouped.warnings) {
             out.push("  [" + f.check + "] " + f.source + ":" + f.line);
             out.push("    " + f.message);
@@ -248,14 +248,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           out.push("");
         }
         if (grouped.gaps.length > 0) {
-          out.push("GAPS — review (" + grouped.gaps.length + ")");
+          out.push("GAPS - review (" + grouped.gaps.length + ")");
           for (const f of grouped.gaps) {
             out.push("  [" + f.check + "] " + f.message);
           }
           out.push("");
         }
         if (result.findings.length === 0) {
-          out.push("No findings — ontology is VALID.");
+          out.push("No findings - ontology is VALID.");
         }
 
         return text(out.join("\n"));
@@ -337,7 +337,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const { result, symbols } = checkPrograms(programs);
         const errors = result.findings.filter((f) => f.severity === "error");
         if (errors.length > 0) {
-          return text("Cannot compile schema — fix errors first. Run validate_ontology.");
+          return text("Cannot compile schema - fix errors first. Run validate_ontology.");
         }
 
         const schemaSQL = emitSchemaSQL(programs, symbols);
@@ -361,10 +361,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         ];
 
         if (openResult.ok) {
-          out.push("SQLite store: " + rootDir + "/memory/ontology.db — READY");
+          out.push("SQLite store: " + rootDir + "/memory/ontology.db - READY");
           out.push("Use write_entity to populate and query_concept to query.");
         } else {
-          out.push("SQLite store: NOT available — " + openResult.error);
+          out.push("SQLite store: NOT available - " + openResult.error);
           out.push("schema.sql is still usable with any external SQLite client.");
         }
 
@@ -379,7 +379,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return text("Store not initialised. Call compile_schema first.");
       }
       if (storeRootDir !== rootDir) {
-        return text(`Store was initialised for "${storeRootDir}" — call compile_schema with rootDir "${rootDir}" first.`);
+        return text(`Store was initialised for "${storeRootDir}" - call compile_schema with rootDir "${rootDir}" first.`);
       }
       const kind = typeof a.kind === "string" ? a.kind : "";
       const id = typeof a.id === "string" ? a.id : "";
@@ -405,7 +405,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return text("Store not initialised. Call compile_schema first.");
       }
       if (storeRootDir !== rootDir) {
-        return text(`Store was initialised for "${storeRootDir}" — call compile_schema with rootDir "${rootDir}" first.`);
+        return text(`Store was initialised for "${storeRootDir}" - call compile_schema with rootDir "${rootDir}" first.`);
       }
       const concept = typeof a.concept === "string" ? a.concept : "";
       const filters = (typeof a.filters === "object" && a.filters !== null)
@@ -423,7 +423,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       const rows = result.rows ?? [];
       const out = [
-        "Concept: " + concept + " — " + rows.length + " row(s)",
+        "Concept: " + concept + " - " + rows.length + " row(s)",
         "SQL: " + result.sql,
         "",
         JSON.stringify(rows, null, 2),

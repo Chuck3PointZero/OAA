@@ -1,4 +1,4 @@
-// Customer acquisition — example .rel ontology
+// Customer acquisition - example .rel ontology
 // Business domain concepts for a performance marketing team.
 // Swap the meta-ads map for any other ad platform without changing roles or skills.
 
@@ -22,7 +22,7 @@ entity Campaign {
   relation targets : Audience [many-to-many]
 }
 
-// A Channel is a delivery surface — search, social, display, etc.
+// A Channel is a delivery surface - search, social, display, etc.
 entity Channel {
   identified-by: ChannelID
   property name : String
@@ -52,7 +52,7 @@ entity StaleActiveCampaign extends Campaign {
 }
 
 // Vocabulary map for Meta Ads API.
-// To switch to Google Ads, replace this block only — concepts stay identical.
+// To switch to Google Ads, replace this block only - concepts stay identical.
 map meta-ads {
   Campaign -> AdSet
   Campaign.budget -> AdSet.daily_budget

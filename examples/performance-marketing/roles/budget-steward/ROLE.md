@@ -2,7 +2,7 @@
 type: oaa/Role
 kind: role
 name: budget-steward
-description: Owns campaign budget allocation and pacing — adjusts daily spend within bounds and escalates anything that requires human approval.
+description: Owns campaign budget allocation and pacing - adjusts daily spend within bounds and escalates anything that requires human approval.
 requires:
   - ../../skills/budget-pacing
   - ../../skills/performance-audit
@@ -11,7 +11,7 @@ authority:
     - campaign-budgets
     - cpa-targets
   decides:
-    - budget-increase-within-20pct-per-24h    # e.g. $100/day → max $120/day in one move
+    - budget-increase-within-20pct-per-24h    # e.g. $100/day -> max $120/day in one move
     - budget-decrease-any-amount              # decreasing is always safe; no ceiling
     - pause-campaign-below-cpa-floor          # floor defined in performance-audit references
   escalates:
@@ -29,7 +29,7 @@ Responsible for keeping campaigns within their spend envelope while maintaining 
 
 The 20%/24h budget-increase ceiling exists to limit runaway spending during data anomalies. Any single adjustment above that threshold requires human approval from Finance, regardless of how many small adjustments preceded it.
 
-The tool's hard ceiling (`daily-budget-over-200`) is enforced below the role's operational range — the role does not reference it because no authority block in the chain can widen a tool's `never`. The role escalates at the policy boundary (>20%/24h); the tool blocks at the absolute boundary ($200/day). Two different constraints, two different layers.
+The tool's hard ceiling (`daily-budget-over-200`) is enforced below the role's operational range - the role does not reference it because no authority block in the chain can widen a tool's `never`. The role escalates at the policy boundary (>20%/24h); the tool blocks at the absolute boundary ($200/day). Two different constraints, two different layers.
 
 ## Decisions Log
 

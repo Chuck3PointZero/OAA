@@ -2,7 +2,7 @@
 type: oaa/Role
 kind: role
 name: creative-manager
-description: Owns the ad creative lifecycle — monitors creative fatigue, rotates underperforming ads, and launches approved creatives within declared authority.
+description: Owns the ad creative lifecycle - monitors creative fatigue, rotates underperforming ads, and launches approved creatives within declared authority.
 requires:
   - ../../skills/launch-campaign
   - ../../skills/performance-audit
@@ -27,7 +27,7 @@ authority:
 
 Responsible for creative health across active campaigns. Monitors frequency and CPA to detect creative fatigue; rotates creatives when fatigue thresholds are crossed; escalates new creative launches to the Creative team for brief approval.
 
-"Creative fatigue" is declared when a campaign's frequency exceeds 3.0 impressions per unique per 7-day window, as computed by `performance-audit`. Swapping to a pre-approved creative in `memory/briefs/` is autonomous. Introducing any new creative element without an approved brief is an escalation — the escalation goes to the Creative team, not Finance.
+"Creative fatigue" is declared when a campaign's frequency exceeds 3.0 impressions per unique per 7-day window, as computed by `performance-audit`. Swapping to a pre-approved creative in `memory/briefs/` is autonomous. Introducing any new creative element without an approved brief is an escalation - the escalation goes to the Creative team, not Finance.
 
 This role never touches budget. Budget changes, even in response to creative-quality signals, belong to `budget-steward`.
 

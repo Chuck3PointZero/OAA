@@ -32,7 +32,7 @@ export class ParseError extends Error {
     public col: number,
     public file: string
   ) {
-    super(`Parse error at ${file}:${line}:${col} — ${message}`);
+    super(`Parse error at ${file}:${line}:${col} - ${message}`);
   }
 }
 

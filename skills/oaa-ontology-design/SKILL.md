@@ -9,13 +9,13 @@ version: 0.2.0
 
 ## What this skill does
 
-Guides you through creating, editing, and validating a business domain ontology for an OAA workspace. The ontology defines **business vocabulary** — the concepts, properties, relationships, and constraints that agents, roles, and skills refer to. Tool nodes then map these business names to API vocabulary.
+Guides you through creating, editing, and validating a business domain ontology for an OAA workspace. The ontology defines **business vocabulary** - the concepts, properties, relationships, and constraints that agents, roles, and skills refer to. Tool nodes then map these business names to API vocabulary.
 
-**Key invariant:** concepts like `Campaign`, `budget`, `Channel` appear throughout the agent graph. The *only* place Meta Ads API names like `AdSet`, `daily_budget` appear is inside a `map` declaration. Swapping tools means replacing one map block — not rewriting roles or skills.
+**Key invariant:** concepts like `Campaign`, `budget`, `Channel` appear throughout the agent graph. The *only* place Meta Ads API names like `AdSet`, `daily_budget` appear is inside a `map` declaration. Swapping tools means replacing one map block - not rewriting roles or skills.
 
 ## Source format: `.rel` files
 
-Ontology source files use a formal logic language with extension `.rel`. Never hand-edit the compiled output `ONTOLOGY.md` — edit `.rel` sources and run `compile_ontology`.
+Ontology source files use a formal logic language with extension `.rel`. Never hand-edit the compiled output `ONTOLOGY.md` - edit `.rel` sources and run `compile_ontology`.
 
 ### Grammar reference
 
@@ -28,7 +28,7 @@ enum EnumName = value1 | value2 | value3
 
 // Base entity
 entity EntityName {
-  identified-by: TypeName         // optional — primary key type
+  identified-by: TypeName         // optional - primary key type
   property prop-name : Type       // functional relation
   relation rel-name : TargetEntity [cardinality]
   constraint constraint-name: expr
@@ -99,7 +99,7 @@ entity Campaign {
     maps/
       meta-ads.rel        # map declarations for Meta Ads
       google-ads.rel      # map declarations for Google Ads
-  ONTOLOGY.md             # compiled output — do not edit
+  ONTOLOGY.md             # compiled output - do not edit
 ```
 
 Any `.rel` file under the workspace is picked up by `compile_ontology`.
@@ -126,7 +126,7 @@ entity Campaign {
 }
 ```
 
-Properties are **business** properties — `budget`, not `daily_budget`. That translation lives in the map.
+Properties are **business** properties - `budget`, not `daily_budget`. That translation lives in the map.
 
 ### 3. Add enumerations for categorical values
 
@@ -241,7 +241,7 @@ The checker validates that every base entity has a map entry in each map. Gaps a
 
 ### Splitting a large ontology
 
-Use multiple `.rel` files — all files in the workspace are loaded together as one program. Cross-file references work (declare type in `core.rel`, use in `relationships.rel`).
+Use multiple `.rel` files - all files in the workspace are loaded together as one program. Cross-file references work (declare type in `core.rel`, use in `relationships.rel`).
 
 ---
 

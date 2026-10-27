@@ -22,14 +22,14 @@ authority:
 captured in the frontmatter (type, env, provenance, never). If the tool is
 straightforward, write only what would surprise a maintainer.}}
 
-## server/ — the implementation
+## server/ - the implementation
 
-- `server/mcp.json` (or client config) — transport configuration
-- `server/proxy/` — enforcement layer applying every `never` in this directory
-- `server/vendor/{{package}}/` — vendored upstream code, hash-pinned via agents.lock
+- `server/mcp.json` (or client config) - transport configuration
+- `server/proxy/` - enforcement layer applying every `never` in this directory
+- `server/vendor/{{package}}/` - vendored upstream code, hash-pinned via agents.lock
 
 ## Undeclared capabilities
 
 {{List functions the server exposes that deliberately have NO capability file.
-Undeclared = unreachable from every chain — stronger than forbidden. Adding one
+Undeclared = unreachable from every chain - stronger than forbidden. Adding one
 later is a reviewed commit; that friction is intentional.}}

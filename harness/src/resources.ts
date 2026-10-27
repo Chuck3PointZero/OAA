@@ -8,11 +8,11 @@ import type { NodeFrontmatter } from "./types.js";
 // OAA graph exposed as MCP Resources
 //
 // URI scheme: oaa://
-//   oaa://index.json           — catalog of all nodes in the graph
-//   oaa://node/<name>          — full content of a named node's typed root file
-//   oaa://chain/<agent-name>   — resolved chain for a named agent (JSON)
-//   oaa://lock                 — agents.lock contents
-//   oaa://ontology             — ONTOLOGY.md contents (if present)
+//   oaa://index.json           - catalog of all nodes in the graph
+//   oaa://node/<name>          - full content of a named node's typed root file
+//   oaa://chain/<agent-name>   - resolved chain for a named agent (JSON)
+//   oaa://lock                 - agents.lock contents
+//   oaa://ontology             - ONTOLOGY.md contents (if present)
 // ---------------------------------------------------------------------------
 
 export interface OaaResource {

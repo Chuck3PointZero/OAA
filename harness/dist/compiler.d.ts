@@ -3,7 +3,7 @@ import type { NodeKind, ResolvedNode, ResolvedChain, ComposedAuthority, Lockfile
  * Find the typed root file for a node at the given path.
  * Accepts either a directory (looks for AGENT.md etc.) or a flat file path.
  *
- * `baseDir` is the directory `nodePath` is resolved against — per the OAA
+ * `baseDir` is the directory `nodePath` is resolved against - per the OAA
  * convention (see every AGENT/ROLE/SKILL template), `requires`/`fills`/
  * `allowed-tools` entries are written relative to the file that declares
  * them ("../../roles/foo" from an AGENT.md two levels under root), not

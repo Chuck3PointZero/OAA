@@ -1,6 +1,6 @@
 # @oaa/ontology
 
-MCP server and compiler for the OAA formal ontology language. Reads `.rel` source files, validates them, and compiles them into `ONTOLOGY.md` — the generated vocabulary reference that OAA agent roles, skills, and tool nodes cite.
+MCP server and compiler for the OAA formal ontology language. Reads `.rel` source files, validates them, and compiles them into `ONTOLOGY.md` - the generated vocabulary reference that OAA agent roles, skills, and tool nodes cite.
 
 Part of the [Organizational Agent Architecture](../README.md) toolkit. Companion to [`@oaa/harness`](../harness/).
 
@@ -8,12 +8,12 @@ Part of the [Organizational Agent Architecture](../README.md) toolkit. Companion
 
 ## What It Does
 
-Business domain ontologies are typed, validated, and compiled — not hand-written markdown. You author `.rel` files describing your business concepts; this package checks them for correctness and produces `ONTOLOGY.md` as a generated artifact, the same way `@oaa/harness` produces `AGENTS.md`.
+Business domain ontologies are typed, validated, and compiled - not hand-written markdown. You author `.rel` files describing your business concepts; this package checks them for correctness and produces `ONTOLOGY.md` as a generated artifact, the same way `@oaa/harness` produces `AGENTS.md`.
 
 ```
-company/ontology/my-domain.rel    ← you author this
-        ↓  compile_ontology
-company/ONTOLOGY.md               ← generated; agents read this; never hand-edited
+company/ontology/my-domain.rel    <- you author this
+        down  compile_ontology
+company/ONTOLOGY.md               <- generated; agents read this; never hand-edited
 ```
 
 ---
@@ -22,20 +22,20 @@ company/ONTOLOGY.md               ← generated; agents read this; never hand-ed
 
 `.rel` is a small declarative language for business domain modeling. It has four statement types:
 
-**`type`** — scalar type aliases
+**`type`** - scalar type aliases
 
 ```rel
 type CampaignID : String
 type Currency   : Currency
 ```
 
-**`enum`** — enumerated value sets
+**`enum`** - enumerated value sets
 
 ```rel
 enum CampaignStatus = Active | Paused | Completed | Archived
 ```
 
-**`entity`** — typed business concepts with properties, relations, and integrity constraints
+**`entity`** - typed business concepts with properties, relations, and integrity constraints
 
 ```rel
 entity Campaign {
@@ -51,7 +51,7 @@ entity Campaign {
 }
 ```
 
-**`entity … extends`** — derived concepts defined by logical rule over a base entity
+**`entity ... extends`** - derived concepts defined by logical rule over a base entity
 
 ```rel
 entity UnderachievingCampaign extends Campaign {
@@ -59,7 +59,7 @@ entity UnderachievingCampaign extends Campaign {
 }
 ```
 
-**`map`** — tool vocabulary maps that translate business names to API field names
+**`map`** - tool vocabulary maps that translate business names to API field names
 
 ```rel
 map meta-ads {
@@ -82,7 +82,7 @@ The server exposes three tools, callable by any MCP-compatible agent:
 |------|-------------|
 | `compile_ontology` | Parse, validate, and compile all `.rel` files in the workspace. Writes `ONTOLOGY.md`. |
 | `validate_ontology` | Parse and validate without writing any output. Returns findings as JSON. |
-| `get_concepts` | Query the compiled symbol table — list all entities, enums, types, or look up a specific concept. |
+| `get_concepts` | Query the compiled symbol table - list all entities, enums, types, or look up a specific concept. |
 
 ---
 
@@ -104,11 +104,11 @@ The `--root` argument (or `OAA_ROOT` environment variable) must point to the dir
 
 The checker runs two phases on every compile and validate call:
 
-**Phase 1 — collect declarations**: Builds a symbol table of all types, enums, and entities across all `.rel` files in the workspace.
+**Phase 1 - collect declarations**: Builds a symbol table of all types, enums, and entities across all `.rel` files in the workspace.
 
-**Phase 2 — validate references**: Checks that every type reference resolves, every relation target is declared, every `extends` points to a base entity (not another derived entity), every constraint expression references declared properties, and every map entry references a declared concept.
+**Phase 2 - validate references**: Checks that every type reference resolves, every relation target is declared, every `extends` points to a base entity (not another derived entity), every constraint expression references declared properties, and every map entry references a declared concept.
 
-Findings are classified as `error` (blocks compilation), `warning` (compiles with note), or `gap` (informational — e.g. an entity not covered by a tool map).
+Findings are classified as `error` (blocks compilation), `warning` (compiles with note), or `gap` (informational - e.g. an entity not covered by a tool map).
 
 The verdict is one of: `VALID`, `VALID-WITH-WARNINGS`, or `INVALID`.
 
@@ -129,21 +129,21 @@ The verdict is one of: `VALID`, `VALID-WITH-WARNINGS`, or `INVALID`.
 
 ```
 your-workspace/
-├── ONTOLOGY.md              ← compiled; do not hand-edit
-├── ontology/
-│   ├── core.rel             ← base concepts
-│   └── acquisition.rel      ← domain-specific concepts
-├── agents/
-├── roles/
-├── skills/
-└── tools/
+|-- ONTOLOGY.md              <- compiled; do not hand-edit
+|-- ontology/
+|   |-- core.rel             <- base concepts
+|   `-- acquisition.rel      <- domain-specific concepts
+|-- agents/
+|-- roles/
+|-- skills/
+`-- tools/
 ```
 
 ---
 
 ## Relationship to `@oaa/harness`
 
-`@oaa/harness` compiles the agent graph (`AGENT.md` → `AGENTS.md`). `@oaa/ontology` compiles the vocabulary (`*.rel` → `ONTOLOGY.md`). They are independent packages with complementary jobs:
+`@oaa/harness` compiles the agent graph (`AGENT.md` -> `AGENTS.md`). `@oaa/ontology` compiles the vocabulary (`*.rel` -> `ONTOLOGY.md`). They are independent packages with complementary jobs:
 
 - The ontology defines **what concepts exist** and **what API names mean**.
 - The harness resolves **who has authority over those concepts** and **what they can decide**.

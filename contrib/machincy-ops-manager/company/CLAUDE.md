@@ -1,4 +1,4 @@
-# Machincy Operations Manager — OAA Territory
+# Machincy Operations Manager - OAA Territory
 
 This directory is an Organizational Agent Architecture (OAA) company. Read
 `INSTRUCTIONS.md` before creating or editing any node.
@@ -26,8 +26,8 @@ To regenerate `agents/orbit/AGENTS.md`:
 
 1. Invoke the `organizational-agents:org-agent-architecture` skill.
 2. Follow the **Compile an Agent** workflow.
-3. Walk the chain: `agents/orbit/AGENT.md` → `roles/operations-manager/ROLE.md`
-   → five skills → `tools/machincy-grokbot/TOOL.md`.
+3. Walk the chain: `agents/orbit/AGENT.md` -> `roles/operations-manager/ROLE.md`
+   -> five skills -> `tools/machincy-grokbot/TOOL.md`.
 4. Run validation; fix any errors before writing output.
 5. Write `agents/orbit/AGENTS.md` and update `agents.lock`.
 
@@ -35,7 +35,7 @@ To regenerate `COMPANY.md` (one level up, at the project root):
 
 1. Invoke the `organizational-agents:org-agent-architecture` skill.
 2. Follow the **Compile Company Map** workflow.
-3. Run validation first — gap findings populate the `## Gaps` section.
+3. Run validation first - gap findings populate the `## Gaps` section.
 4. Write `../COMPANY.md`.
 
 ## Known Gaps (as of 2026-09-27)

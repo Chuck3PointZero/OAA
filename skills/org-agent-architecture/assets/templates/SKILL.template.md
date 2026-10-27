@@ -13,17 +13,17 @@ authority:                           # ONLY if this procedure adds its own const
 # Skill: {{Skill Name}}
 
 {{Only write this if the skill's scope or preconditions aren't obvious from the
-description. Usually omit — the ## Workflow below is the body.}}
+description. Usually omit - the ## Workflow below is the body.}}
 
 ## Workflow
 
-1. {{Step — name the tool function used}}
-2. {{Decision point — thresholds as numbers; note which verdicts belong to the
+1. {{Step - name the tool function used}}
+2. {{Decision point - thresholds as numbers; note which verdicts belong to the
     ROLE (the skill detects the threshold; the role owns it)}}
-3. {{Output/handoff — what is written to memory, dispatched, or escalated}}
+3. {{Output/handoff - what is written to memory, dispatched, or escalated}}
 
 ## Supporting Files
 
-- `scripts/` — deterministic helpers (optional)
-- `references/` — loaded on demand
-- `assets/` — output templates this procedure fills
+- `scripts/` - deterministic helpers (optional)
+- `references/` - loaded on demand
+- `assets/` - output templates this procedure fills

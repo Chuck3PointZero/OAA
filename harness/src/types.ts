@@ -31,7 +31,7 @@ export interface Provenance {
 }
 
 export interface EnforcementGap {
-  reason: string;   // why no enforcement anchor exists yet — required;
+  reason: string;   // why no enforcement anchor exists yet - required;
                      // an empty/missing reason does not count as acknowledged
   owner?: string;    // who is accountable for closing this gap
   revisit?: string;  // ISO date (YYYY-MM-DD) to re-check whether it's closed;
@@ -53,6 +53,7 @@ export interface NodeFrontmatter {
   auth?: string;
   layer?: string;
   models?: string[];
+  executor?: string;         // agent only: llm | remote | predicate | human
   provenance?: Provenance;
 }
 

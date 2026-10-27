@@ -7,16 +7,16 @@ edit, or validate a node in this repository, read this file first.
 
 - One primitive, four kinds: `agent`, `role`, `skill`, `tool`. Same frontmatter
   schema everywhere: `kind`, `name`, `description`, `requires`, `authority`.
-- `requires` is the only edge, and it points down only: agent → role → skill →
+- `requires` is the only edge, and it points down only: agent -> role -> skill ->
   tool. Aliases: `fills` (agent), `allowed-tools` (skill).
-- Authority composes by union — `never`, `decides`, `escalates` all accumulate
+- Authority composes by union - `never`, `decides`, `escalates` all accumulate
   down the chain. Precedence: `never` > `escalates` > `decides`. Anything named
   nowhere defaults to escalate.
 - `agents.lock` pins every node by content hash. Generated, never hand-edited.
 
 ## Before You Write Anything
 
-1. Copy the matching template from `assets/templates/` — never write frontmatter
+1. Copy the matching template from `assets/templates/` - never write frontmatter
    from memory.
 2. Fill frontmatter first, body second. Resolve every `{{placeholder}}`.
 3. Place each authority constraint at the one layer that owns it (see
@@ -33,7 +33,7 @@ edit, or validate a node in this repository, read this file first.
 Run `references/validation.md` top to bottom. Every finding you report must
 quote the specific rule it violates. If you cannot point to a line in
 `validation.md`, `authority-model.md`, or `SKILL.md` that a node violates, it is
-not a finding — do not invent one.
+not a finding - do not invent one.
 
 ## Kind Cheat Sheet
 

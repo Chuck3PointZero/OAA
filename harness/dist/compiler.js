@@ -24,7 +24,7 @@ const FLAT_EXTENSIONS = {
  * Find the typed root file for a node at the given path.
  * Accepts either a directory (looks for AGENT.md etc.) or a flat file path.
  *
- * `baseDir` is the directory `nodePath` is resolved against — per the OAA
+ * `baseDir` is the directory `nodePath` is resolved against - per the OAA
  * convention (see every AGENT/ROLE/SKILL template), `requires`/`fills`/
  * `allowed-tools` entries are written relative to the file that declares
  * them ("../../roles/foo" from an AGENT.md two levels under root), not
@@ -48,7 +48,7 @@ export function findNodeFile(nodePath, baseDir) {
         else {
             // The path already points at a file. It may spell out the typed
             // filename itself (some real nodes write "../../tools/foo/TOOL.md"
-            // instead of just "../../tools/foo") — check for an exact basename
+            // instead of just "../../tools/foo") - check for an exact basename
             // match before falling back to the flat-file (*.kind.md) form.
             const base = abs.split(/[\\/]/).pop() || "";
             for (const [kind, filename] of Object.entries(TYPED_FILENAMES)) {
@@ -120,7 +120,7 @@ export function resolveRequires(node, rootDir, visited = new Set(), depth = 0) {
     const resolved = [];
     // Resolve each `requires` entry relative to the directory containing
     // THIS node's own file, per OAA convention ("../../roles/foo" from a
-    // node living one level under root) — not relative to rootDir.
+    // node living one level under root) - not relative to rootDir.
     const nodeDir = statSync(node.path).isFile() ? dirname(node.path) : node.path;
     for (const req of requires) {
         if (visited.has(req))
@@ -204,7 +204,7 @@ export function composeAuthority(chain) {
     }
     // Union of decides: grants accumulate. An agent filling several roles holds the
     // sum of their grants, and an empty `decides: []` contributes nothing rather than
-    // zeroing its siblings. Narrowing is `never`'s job — applied below.
+    // zeroing its siblings. Narrowing is `never`'s job - applied below.
     const decidesUnion = new Set();
     for (const set of decideSets) {
         for (const item of set)
@@ -245,7 +245,7 @@ export function renderAgentsMd(chain, authority, rootDir) {
     }
     lines.push("");
     // Agent's own narrative body (AGENT.md content below its frontmatter). Always
-    // included, independent of whether this agent fills any roles — this is the
+    // included, independent of whether this agent fills any roles - this is the
     // one place an agent's own instructions/context can live, and previously this
     // function silently dropped it entirely (only role.body/skill.body were ever
     // rendered), so a role-less agent compiled to nothing but an identity line and
@@ -360,7 +360,7 @@ export function buildMcpConfig(chain, rootDir) {
                 Object.assign(mcpServers, raw.mcpServers);
             }
             else {
-                // Bare single-server config with no mcpServers wrapper —
+                // Bare single-server config with no mcpServers wrapper -
                 // key it by the tool's own name.
                 mcpServers[tool.name] = raw;
             }
@@ -425,7 +425,7 @@ export function compileAgent(agentName, rootDir) {
     const agentDir = dirname(chain.agent.path);
     const agentsPath = join(agentDir, "AGENTS.md");
     writeFileSync(agentsPath, content, "utf-8");
-    // If models includes "tiny", copy AGENTS.md → AGENTS.orig.md as the
+    // If models includes "tiny", copy AGENTS.md -> AGENTS.orig.md as the
     // narrative backup for the LLM to read during Pass 2 compaction.
     const models = chain.agent.frontmatter.models ?? [];
     const compactNeeded = models.includes("tiny");
@@ -434,13 +434,13 @@ export function compileAgent(agentName, rootDir) {
         agentsOrigPath = join(agentDir, "AGENTS.orig.md");
         writeFileSync(agentsOrigPath, content, "utf-8");
     }
-    // Write mcp-config.json next to AGENTS.md — the merged transport config
+    // Write mcp-config.json next to AGENTS.md - the merged transport config
     // for every required MCP tool, so `--mcp-config` always has exactly one
     // per-agent file to point at regardless of how many tools the agent needs.
     const { config: mcpConfig, missing: missingMcpConfigs } = buildMcpConfig(chain, rootDir);
     const mcpConfigPath = join(agentDir, "mcp-config.json");
     writeFileSync(mcpConfigPath, JSON.stringify(mcpConfig, null, 2), "utf-8");
-    // Write agents.lock at rootDir — merge with existing so sequential compile_agent
+    // Write agents.lock at rootDir - merge with existing so sequential compile_agent
     // calls accumulate all agent chains rather than each overwriting the previous.
     const lockPath = join(rootDir, "agents.lock");
     let existingNodes = {};
@@ -450,7 +450,7 @@ export function compileAgent(agentName, rootDir) {
             existingNodes = existing.nodes ?? {};
         }
         catch {
-            // corrupt or empty lockfile — start fresh
+            // corrupt or empty lockfile - start fresh
         }
     }
     const lockfile = buildLockfile(chain, rootDir);
@@ -507,7 +507,7 @@ export function validateGraph(rootDir) {
                 severity: "error",
                 check: "Node Identity",
                 file: af,
-                message: `AGENT.md has kind: "${agent.frontmatter.kind}" — must be "agent"`,
+                message: `AGENT.md has kind: "${agent.frontmatter.kind}" - must be "agent"`,
                 fix: `Set kind: agent in ${af}`,
             });
         }
@@ -527,11 +527,11 @@ export function validateGraph(rootDir) {
         if (!chain)
             continue;
         chains.push(chain);
-        // Check tool wiring: a TOOL.md is a declaration, not an implementation —
+        // Check tool wiring: a TOOL.md is a declaration, not an implementation -
         // for ANY type (mcp, api, local), not just mcp. type: "mcp" tools need
         // a real server/mcp.json to be launchable at all. Any tool of any type
         // with authority.never rules needs an enforcement anchor (a TOOL.md
-        // alone cannot block a call — something has to actually intercept it):
+        // alone cannot block a call - something has to actually intercept it):
         // server/proxy/ for mcp tools, or a non-empty scripts/ dir, or a
         // resolvable provenance.vendored pointer for api/local tools (vendored
         // now means "where the real implementation lives," whether that's a
@@ -539,7 +539,7 @@ export function validateGraph(rootDir) {
         // elsewhere in the repo). A declared provenance.vendored path must
         // exist on disk regardless of type. Convention: OAA/skills/
         // org-agent-architecture/references/example-meta-ads.md. This is what
-        // used to require a human to notice by hand — now it surfaces here as
+        // used to require a human to notice by hand - now it surfaces here as
         // part of the standard checklist, for every tool type.
         for (const tool of chain.tools) {
             if (checkedTools.has(tool.name))
@@ -560,7 +560,7 @@ export function validateGraph(rootDir) {
                     severity: "error",
                     check: "Tool Wiring",
                     file: tool.path,
-                    message: `Tool "${tool.name}" is connector: mcp but has no server/mcp.json — it cannot be launched`,
+                    message: `Tool "${tool.name}" is connector: mcp but has no server/mcp.json - it cannot be launched`,
                     fix: `Add ${join("server", "mcp.json")} under ${relative(rootDir, toolDir)} (transport config naming env vars only, no secrets). See OAA/skills/org-agent-architecture/references/example-meta-ads.md`,
                 });
             }
@@ -587,14 +587,14 @@ export function validateGraph(rootDir) {
                     if (gap?.reason) {
                         // Acknowledged gap: a deliberate, documented decision not to
                         // build enforcement yet, rather than an oversight. Surfaced as
-                        // "gap" (decide) instead of "error" (must fix) — but never
+                        // "gap" (decide) instead of "error" (must fix) - but never
                         // silently, and not forever: once `revisit` has passed, this
                         // escalates back to "warning" so an acknowledgment can't just
                         // sit unreviewed indefinitely.
                         //
                         // `revisit` is typed as a string, but an UNQUOTED date in YAML
                         // (revisit: 2026-09-01) is auto-parsed into a real Date object
-                        // by the frontmatter parser, not left as a string — quoted or
+                        // by the frontmatter parser, not left as a string - quoted or
                         // not, normalize here so display and comparison both work.
                         const revisitRaw = gap.revisit;
                         const revisitDate = revisitRaw instanceof Date
@@ -618,7 +618,7 @@ export function validateGraph(rootDir) {
                                 ? `Tool "${tool.name}" has an acknowledged enforcement gap past its revisit date (${revisitDisplay}, owner: ${owner}): ${gap.reason}`
                                 : `Tool "${tool.name}" has an acknowledged enforcement gap (owner: ${owner}${revisitDisplay ? `, revisit: ${revisitDisplay}` : ""}): ${gap.reason}`,
                             fix: overdue
-                                ? `Revisit the enforcement gap on "${tool.name}" — the date has passed. Either close it (proxy/scripts/vendored) or set a new provenance["enforcement-gap"].revisit date.`
+                                ? `Revisit the enforcement gap on "${tool.name}" - the date has passed. Either close it (proxy/scripts/vendored) or set a new provenance["enforcement-gap"].revisit date.`
                                 : `Tracked via provenance["enforcement-gap"] in ${tool.path}. No action required before ${revisitDisplay ?? "the next revisit"}.`,
                         });
                     }
@@ -627,7 +627,7 @@ export function validateGraph(rootDir) {
                             severity: "error",
                             check: "Tool Wiring",
                             file: tool.path,
-                            message: `Tool "${tool.name}" declares ${never.length} authority.never rule(s) but has no enforcement anchor (no server/proxy/, no scripts/, no resolvable provenance.vendored) — nothing actually enforces them at call time, so the rule is decorative`,
+                            message: `Tool "${tool.name}" declares ${never.length} authority.never rule(s) but has no enforcement anchor (no server/proxy/, no scripts/, no resolvable provenance.vendored) - nothing actually enforces them at call time, so the rule is decorative`,
                             fix: toolType === "mcp"
                                 ? `Add an enforcement proxy under ${relative(rootDir, proxyDir)} that intercepts every tool call and applies each never rule before forwarding to the real backend, or document why not yet via provenance["enforcement-gap"] (reason, owner, revisit). See OAA/skills/org-agent-architecture/references/example-meta-ads.md`
                                 : `Point provenance.vendored at the file(s) that actually implement and enforce this rule (e.g. a sibling backend repo), add wrapper/enforcement code under ${relative(rootDir, scriptsDir)}, or document why not yet via provenance["enforcement-gap"] (reason, owner, revisit). See OAA/skills/org-agent-architecture/references/example-meta-ads.md`,
@@ -636,7 +636,7 @@ export function validateGraph(rootDir) {
                 }
             }
         }
-        // Check that requires entries resolve — relative to the agent's own
+        // Check that requires entries resolve - relative to the agent's own
         // directory, matching the convention every requiring node uses.
         const rawRequires = agent.frontmatter.requires ||
             agent.frontmatter.fills ||
@@ -648,7 +648,7 @@ export function validateGraph(rootDir) {
                     severity: "error",
                     check: "Edges",
                     file: af,
-                    message: `Unresolved requires: "${req}" — no node found at that path`,
+                    message: `Unresolved requires: "${req}" - no node found at that path`,
                     fix: `Create the node at ${req} or update the requires path`,
                 });
             }
@@ -691,13 +691,13 @@ export function validateGraph(rootDir) {
                 });
             }
         }
-        // Check authority placement — agents should not declare decides/escalates
+        // Check authority placement - agents should not declare decides/escalates
         if (agent.frontmatter.authority?.decides?.length) {
             findings.push({
                 severity: "warning",
                 check: "Authority",
                 file: af,
-                message: "Agent declares `decides` — authority should be declared at role level",
+                message: "Agent declares `decides` - authority should be declared at role level",
                 fix: "Move `decides` into the role's authority section",
             });
         }
@@ -710,7 +710,7 @@ export function validateGraph(rootDir) {
                     severity: "error",
                     check: "Authority",
                     file: chain.agent.path,
-                    message: `Authority conflict: "${d}" appears in both decides and never — never wins`,
+                    message: `Authority conflict: "${d}" appears in both decides and never - never wins`,
                 });
             }
         }
@@ -720,7 +720,7 @@ export function validateGraph(rootDir) {
                 severity: "gap",
                 check: "Edges",
                 file: af,
-                message: `Agent "${agent.name}" has no roles — consider adding at least one ROLE.md`,
+                message: `Agent "${agent.name}" has no roles - consider adding at least one ROLE.md`,
             });
         }
         // Check lockfile exists
@@ -730,7 +730,7 @@ export function validateGraph(rootDir) {
                 severity: "warning",
                 check: "Lockfile",
                 file: rootDir,
-                message: "agents.lock not found — run compile_agent to generate it",
+                message: "agents.lock not found - run compile_agent to generate it",
             });
         }
         else {
@@ -743,7 +743,7 @@ export function validateGraph(rootDir) {
                     severity: "warning",
                     check: "Lockfile",
                     file: lockPath,
-                    message: "agents.lock is corrupt or unparseable — run compile_agent to regenerate it.",
+                    message: "agents.lock is corrupt or unparseable - run compile_agent to regenerate it.",
                 });
                 continue;
             }
@@ -756,7 +756,7 @@ export function validateGraph(rootDir) {
                         severity: "warning",
                         check: "Lockfile",
                         file: lockPath,
-                        message: `Node "${node.name}" is not in agents.lock — run compile_agent to refresh`,
+                        message: `Node "${node.name}" is not in agents.lock - run compile_agent to refresh`,
                     });
                 }
                 else {
@@ -766,7 +766,7 @@ export function validateGraph(rootDir) {
                             severity: "warning",
                             check: "Lockfile",
                             file: lockPath,
-                            message: `Node "${node.name}" has changed since last compile — run compile_agent to refresh`,
+                            message: `Node "${node.name}" has changed since last compile - run compile_agent to refresh`,
                         });
                     }
                 }

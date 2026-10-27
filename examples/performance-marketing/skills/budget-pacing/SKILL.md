@@ -7,7 +7,7 @@ allowed-tools:
   - ../../tools/meta-ads
 authority:
   escalates:
-    - repeated-tool-failure   # if update_campaign fails 3× in one activation, escalate rather than retry
+    - repeated-tool-failure   # if update_campaign fails 3x in one activation, escalate rather than retry
 ---
 
 # Skill: Budget Pacing
