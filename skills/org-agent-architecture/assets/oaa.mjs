@@ -9597,15 +9597,13 @@ var TYPED_FILENAMES = {
   agent: "AGENT.md",
   role: "ROLE.md",
   skill: "SKILL.md",
-  tool: "TOOL.md",
-  noun: "NOUN.md"
+  tool: "TOOL.md"
 };
 var FLAT_EXTENSIONS = {
   agent: ".agent.md",
   role: ".role.md",
   skill: ".skill.md",
-  tool: ".tool.md",
-  noun: ".noun.md"
+  tool: ".tool.md"
 };
 function findNodeFile(nodePath, baseDir) {
   const abs = resolve(baseDir, nodePath);
@@ -9649,7 +9647,7 @@ function parseNode(filePath, kind) {
   const raw = readFileSync(filePath, "utf-8");
   const { data, content } = (0, import_gray_matter.default)(raw);
   const fm = data;
-  const name = fm.name || (statSync(filePath).isFile() ? basename(dirname(filePath)) || basename(filePath).replace(/\.(agent|role|skill|tool|noun)\.md$/, "").toLowerCase() : "unknown");
+  const name = fm.name || (statSync(filePath).isFile() ? basename(dirname(filePath)) || basename(filePath).replace(/\.(agent|role|skill|tool)\.md$/, "").toLowerCase() : "unknown");
   return {
     kind: fm.kind || kind,
     name,

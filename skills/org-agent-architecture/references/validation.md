@@ -25,7 +25,7 @@ actually gives.
 
 ## 1. Node Identity
 
-- [ ] Every node directory contains exactly one typed root file (`AGENT.md` / `ROLE.md` / `SKILL.md` / `TOOL.md` / `NOUN.md`) - **error** if zero or multiple.
+- [ ] Every node directory contains exactly one typed root file (`AGENT.md` / `ROLE.md` / `SKILL.md` / `TOOL.md`) - **error** if zero or multiple.
 - [ ] Frontmatter `kind` matches the typed filename - **error**.
 - [ ] Frontmatter has `kind`, `name`, `description`; `name` matches the directory name (or filename stem for flat-file nodes) - **error**.
 - [ ] Directory nodes have a manifest (`<kind>.json`) whose `name`/`kind` match the frontmatter - **warning** if missing, **error** if contradictory.

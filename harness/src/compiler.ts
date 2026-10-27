@@ -24,7 +24,6 @@ const TYPED_FILENAMES: Record<NodeKind, string> = {
   role: "ROLE.md",
   skill: "SKILL.md",
   tool: "TOOL.md",
-  noun: "NOUN.md",
 };
 
 const FLAT_EXTENSIONS: Record<NodeKind, string> = {
@@ -32,7 +31,6 @@ const FLAT_EXTENSIONS: Record<NodeKind, string> = {
   role: ".role.md",
   skill: ".skill.md",
   tool: ".tool.md",
-  noun: ".noun.md",
 };
 
 /**
@@ -115,7 +113,7 @@ export function parseNode(filePath: string, kind: NodeKind): ResolvedNode {
     (statSync(filePath).isFile()
       ? basename(dirname(filePath)) ||
         basename(filePath)
-          .replace(/\.(agent|role|skill|tool|noun)\.md$/, "")
+          .replace(/\.(agent|role|skill|tool)\.md$/, "")
           .toLowerCase()
       : "unknown");
 

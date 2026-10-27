@@ -21,9 +21,9 @@ in place and ask the user to copy the folder first.
 
 ## Steps
 
-1. **Node fields.** For every `AGENT.md`, `ROLE.md`, `SKILL.md`, `TOOL.md` and `NOUN.md` (and the
+1. **Node fields.** For every `AGENT.md`, `ROLE.md`, `SKILL.md` and `TOOL.md` (and the
    flat `<name>.<kind>.md` forms):
-   - add `type: oaa/<Kind>` (`oaa/Agent`, `oaa/Role`, `oaa/Skill`, `oaa/Tool`, `oaa/Noun`) matching
+   - add `type: oaa/<Kind>` (`oaa/Agent`, `oaa/Role`, `oaa/Skill`, `oaa/Tool`) matching
      `kind`, if it is missing;
    - in a tool, rename `type: mcp`, `type: api` or `type: local` to `connector:` with the same value.
 

@@ -12,7 +12,7 @@ authority:
   never:      # actions forbidden regardless of who asks - including humans asking the agent
 ```
 
-Omit any field with no content. Every identifier is a lowercase, hyphenated string naming a domain noun or action; reuse identifiers exactly across files - they are future `NOUN.md` candidates and the conflict checker matches them lexically until the noun layer is adopted.
+Omit any field with no content. Every identifier is a lowercase, hyphenated string naming a domain noun or action; reuse identifiers exactly across files - the conflict checker matches them lexically.
 
 ## Composition Rules
 

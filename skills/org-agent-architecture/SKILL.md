@@ -2,7 +2,7 @@
 kind: skill
 name: org-agent-architecture
 aliases: [oaa]
-description: Scaffold, decompose, validate, and maintain organizational agent hierarchies under the AGENT -> ROLE -> SKILL -> TOOL convention (one primitive, four kinds, authority blocks, agents.lock). Use this skill whenever the user wants to create or edit an AGENT.md, ROLE.md, SKILL.md, TOOL.md, or NOUN.md; define what an agent owns, decides, escalates, or must never do; set up or reorganize a repository of agents, roles, skills, or tools; wrap an MCP server or API as a tool; split a role into sub-roles or extract a shared skill; review an agent architecture for ownership conflicts or authority gaps; or generate or update agents.lock entries - even if they don't name the convention explicitly and just say things like "give this agent a job description," "what is this agent allowed to do on its own," or "add a new tool for X."
+description: Scaffold, decompose, validate, and maintain organizational agent hierarchies under the AGENT -> ROLE -> SKILL -> TOOL convention (one primitive, four kinds, authority blocks, agents.lock). Use this skill whenever the user wants to create or edit an AGENT.md, ROLE.md, SKILL.md, TOOL.md; define what an agent owns, decides, escalates, or must never do; set up or reorganize a repository of agents, roles, skills, or tools; wrap an MCP server or API as a tool; split a role into sub-roles or extract a shared skill; review an agent architecture for ownership conflicts or authority gaps; or generate or update agents.lock entries - even if they don't name the convention explicitly and just say things like "give this agent a job description," "what is this agent allowed to do on its own," or "add a new tool for X."
 allowed-tools:
   - read
   - write

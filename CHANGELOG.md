@@ -43,7 +43,7 @@ All notable changes to OAA are documented here. Entries before 0.8.0 were writte
 ### Changed (Phase 3: templates)
 
 - **Templates audited against the field table.** The agent template lists `executor` (all four values) and `models`; the tool template lists `auth`, `layer` and `concept-map`. `INSTRUCTIONS.md` gained the tool fields that `SKILL.md`'s Tool Types table carried (`auth`, `layer`, `models`) and the connector guidance, so that table is no longer needed.
-- **`assets/templates/examples/`**: one filled example of every kind and every executor, as a small company (a probe tool, three skills, three roles, three agents, a noun). It validates clean and all three agents compile.
+- **`assets/templates/examples/`**: one filled example of every kind and every executor, as a small company (a probe tool, three skills, three roles, three agents). It validates clean and all three agents compile.
 - **`SKILL.md`'s "Quick Template" and "Tool Types" sections are replaced by a short "Templates" pointer.** The Quick Template was stale (no `type:`), and both were copies of text that now lives in `INSTRUCTIONS.md` and `templates/`.
 - **The lock hash scope is stated correctly** in `templates/README.md` and `references/validation.md`: the typed root file and the four sub-folders, not the manifest.
 
@@ -60,7 +60,7 @@ All notable changes to OAA are documented here. Entries before 0.8.0 were writte
 
 ### Added
 
-- **OKF (Open Knowledge Format) conformance.** Every OAA node is now a conformant OKF v0.2 concept document. The `type:` frontmatter field uses Kubernetes-style namespacing: `oaa/Agent`, `oaa/Role`, `oaa/Skill`, `oaa/Tool`, `oaa/Noun`. All templates, all example files, and the reference example updated.
+- **OKF (Open Knowledge Format) conformance.** Every OAA node is now a conformant OKF v0.2 concept document. The `type:` frontmatter field uses Kubernetes-style namespacing: `oaa/Agent`, `oaa/Role`, `oaa/Skill`, `oaa/Tool`. All templates, all example files, and the reference example updated.
 
 ### Changed
 

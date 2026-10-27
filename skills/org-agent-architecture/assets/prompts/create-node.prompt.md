@@ -70,7 +70,7 @@ is created.
 | A procedure: steps, a workflow, a how-to, a when-to | **skill** |
 | An accountability: a domain someone owns, with decision rights and escalation thresholds | **role** |
 | A runner: a schedule, memory, a model, the thing that executes | **agent** |
-| An object acted upon (the subscriber list, the budget) | **noun**, or a consistently named string in authority fields before nouns are adopted |
+| An object acted upon (the subscriber list, the budget) | a consistently named string in authority fields |
 
 ## Executor, when the node is an agent
 

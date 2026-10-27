@@ -1,6 +1,6 @@
 // Core OAA node types
 
-export type NodeKind = "agent" | "role" | "skill" | "tool" | "noun";
+export type NodeKind = "agent" | "role" | "skill" | "tool";
 
 export interface Authority {
   owns?: string[];

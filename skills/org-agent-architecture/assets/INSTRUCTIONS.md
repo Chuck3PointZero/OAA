@@ -14,7 +14,7 @@ This file lives at `.oaa/INSTRUCTIONS.md`, and every path in it is relative to `
 
 ## The Model
 
-- One primitive, four kinds: `agent`, `role`, `skill`, `tool`. A fifth, `noun`, is optional. Every
+- One primitive, four kinds: `agent`, `role`, `skill`, `tool`. Every
   node has the same core frontmatter: `type`, `kind`, `name`, `description`, `requires`, `authority`.
 - `requires` is the only edge, and it points down only: agent -> role -> skill -> tool. The agent's
   spelling is `fills`; the skill's is `allowed-tools`.
@@ -32,8 +32,8 @@ all cite it. A field not in it is a finding.
 
 | Field | Kind | Required | Meaning |
 |---|---|---|---|
-| `type` | all | yes | `oaa/Agent`, `oaa/Role`, `oaa/Skill`, `oaa/Tool` or `oaa/Noun`. Matches `kind`. |
-| `kind` | all | yes | `agent`, `role`, `skill`, `tool` or `noun`. |
+| `type` | all | yes | `oaa/Agent`, `oaa/Role`, `oaa/Skill` or `oaa/Tool`. Matches `kind`. |
+| `kind` | all | yes | `agent`, `role`, `skill` or `tool`. |
 | `name` | all | yes | Lowercase, hyphenated. Matches the directory name, or the file name before `.<kind>.md`. |
 | `description` | all | yes | One sentence. |
 | `fills` | agent | yes | Paths to the roles it fills. This is the agent's `requires`. |
@@ -51,7 +51,6 @@ all cite it. A field not in it is a finding.
 | `layer` | tool (`local`) | no | `sqlalchemy`, `filesystem` or `internal-service`. |
 | `concept-map` | tool | no | The name of the ontology `map` block that translates this tool's vocabulary (set by the ontology skill). |
 | `provenance` | tool | for `api` and `mcp` | `source`, `status` (`first-party` or `third-party`), `vendored`, `pinned-in`, and an optional acknowledged `enforcement-gap`. |
-| `system-of-record`, `states`, `relationships`, `classification` | noun | `system-of-record` | What the noun is and where it lives. `classification` is reserved. |
 
 Authority by kind: a **role** has `owns`, `decides`, `escalates` and `never`; a **skill** has only
 `escalates`, and only when the procedure adds its own trigger; a **tool** has only `never`. Place each

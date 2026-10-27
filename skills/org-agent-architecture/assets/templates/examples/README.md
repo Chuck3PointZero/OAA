@@ -16,6 +16,5 @@ only to see the shape; create real nodes from the templates one folder up.
 | agent | `agents/status-reporter/` | `executor: llm` with `models: [tiny]`, a schedule and a memory section. |
 | agent | `agents/site-watcher/` | `executor: predicate`: no model at run time. |
 | agent | `agents/site-owner/` | `executor: human`: no schedule, never run. |
-| noun | `nouns/site/` | A domain object and where it lives. |
 
 None of the agents declares authority. Each role owns something no other role owns.
