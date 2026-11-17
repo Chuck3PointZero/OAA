@@ -12,7 +12,7 @@
       "name": "organizational-agents",
       "source": "./",
       "description": "Organizational Agent Architecture (OAA) - structure multi-agent systems the way companies are structured. Agents fill roles, roles require skills, skills require tools, and bounded authority composes down the chain. Includes two skills, a small command-line utility for compile and validate, and the ontology MCP server.",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "category": "agents",
       "tags": [
         "organizational-agents",

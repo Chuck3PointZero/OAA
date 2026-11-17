@@ -1,8 +1,9 @@
 ---
-kind: skill
 name: oaa-ontology-design
 description: Author, edit, and validate OAA business domain ontologies written in the .rel formal language, including concepts, properties, relationships, constraints, and tool maps. Use this skill whenever the user wants to create or change a .rel source file, define business vocabulary for agents, roles, or skills, map business concept names to an API or tool vocabulary, or compile and validate ONTOLOGY.md, even if they only say things like "add a Campaign concept" or "map this API to our ontology."
-version: 0.2.0
+metadata:
+  kind: skill
+  version: "0.2.0"
 ---
 
 # OAA Ontology Design Skill

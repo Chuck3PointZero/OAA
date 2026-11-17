@@ -2,6 +2,17 @@
 
 All notable changes to OAA are documented here. Entries before 0.8.0 were written for `@oaa/harness`.
 
+## 0.8.1 - 2026-11-17
+
+### Changed
+
+- **Skill headers follow the spec.** `org-agent-architecture` drops `kind`, `aliases` and `triggers` and writes `allowed-tools` as one space-separated line. `oaa-ontology-design` moves `kind` and `version` under `metadata`, and its description now says when to use the skill.
+- **The harness README is rewritten**, and `harness/dist` is no longer shipped.
+
+### Added
+
+- **`LICENSE`** (MIT), matching `plugin.json`.
+
 ## 0.8.0 - 2026-10-26
 
 ### BREAKING
