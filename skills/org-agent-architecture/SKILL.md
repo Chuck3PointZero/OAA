@@ -1,58 +1,7 @@
 ---
-kind: skill
 name: org-agent-architecture
-aliases: [oaa]
 description: Scaffold, decompose, validate, and maintain organizational agent hierarchies under the AGENT -> ROLE -> SKILL -> TOOL convention (one primitive, four kinds, authority blocks, agents.lock). Use this skill whenever the user wants to create or edit an AGENT.md, ROLE.md, SKILL.md, TOOL.md; define what an agent owns, decides, escalates, or must never do; set up or reorganize a repository of agents, roles, skills, or tools; wrap an MCP server or API as a tool; split a role into sub-roles or extract a shared skill; review an agent architecture for ownership conflicts or authority gaps; or generate or update agents.lock entries - even if they don't name the convention explicitly and just say things like "give this agent a job description," "what is this agent allowed to do on its own," or "add a new tool for X."
-allowed-tools:
-  - read
-  - write
-  - edit
-  - glob
-  - grep
-triggers:
-  - give this agent a job description
-  - what is this agent allowed to do on its own
-  - what can this agent do without asking
-  - create an AGENT.md
-  - create a ROLE.md
-  - create a SKILL.md
-  - create a TOOL.md
-  - add a new role
-  - add a new agent
-  - authority block
-  - who decides
-  - who owns this
-  - escalation threshold
-  - what is this agent never allowed to do
-  - agents.lock
-  - compile agent
-  - compile the agent
-  - agent hierarchy
-  - wrap an MCP server
-  - wrap an API as a tool
-  - split a role
-  - extract a shared skill
-  - agent architecture
-  - organizational agent
-  - OAA
-  - AGENT.md
-  - ROLE.md
-  - agent permission
-  - agent authority
-  - agent ownership
-  - what does this agent own
-  - decision rights
-  - escalation rules
-  - never rules
-  - node validation
-  - agents dot lock
-  - lockfile
-  - COMPANY.md
-  - company map
-  - ontology
-  - compile schema
-  - write entity
-  - query concept
+allowed-tools: Read Write Edit Glob Grep
 ---
 
 # Organizational Agent Architecture
