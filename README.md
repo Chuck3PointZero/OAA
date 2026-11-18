@@ -367,5 +367,3 @@ The skill lives in `skills/org-agent-architecture/`. To propose changes:
 1. Fork this repository
 2. Edit `skills/org-agent-architecture/SKILL.md` or files in `references/`
 3. Open a pull request with your rationale
-
-Community examples welcome in `contrib/`.

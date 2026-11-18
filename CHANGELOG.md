@@ -9,6 +9,10 @@ All notable changes to OAA are documented here. Entries before 0.8.0 were writte
 - **Skill headers follow the spec.** `org-agent-architecture` drops `kind`, `aliases` and `triggers` and writes `allowed-tools` as one space-separated line. `oaa-ontology-design` moves `kind` and `version` under `metadata`, and its description now says when to use the skill.
 - **The harness README is rewritten**, and `harness/dist` is no longer shipped.
 
+### Removed
+
+- **`contrib/`** (the Machincy ops-manager company and the example ontology), which carried an `agents.lock`, a `.rel` source and an API-key `curl` example. The `examples/` folder is unchanged.
+
 ### Added
 
 - **`LICENSE`** (MIT), matching `plugin.json`.
